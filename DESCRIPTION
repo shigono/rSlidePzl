@@ -13,3 +13,12 @@ LazyData: true
 RoxygenNote: 6.1.1
 Suggests: 
     testthat
+Imports: 
+    data.table,
+    GGally,
+    ggplot2,
+    network,
+    igraph,
+    sna,
+    intergraph,
+    scales

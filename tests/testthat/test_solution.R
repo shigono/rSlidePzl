@@ -25,7 +25,6 @@ oStart <- makeState(
     makePiece(type = "H", loc = c(3,2))
   )
 )
-stopifnot(isValidState(oStart, oSetting))
 
 # define conditions of goal
 oGoalCondition <- makeState(
@@ -40,15 +39,17 @@ oGoalCondition <- makeState(
     makePiece(type = "H", loc = c(3,2))
   )
 )
-stopifnot(isValidState(oGoalCondition, oSetting))
 
 # analyse the puzzle and make a network graph of states
-oGraph <- makeGraph(oSetting, oStart, oGoalCondition, max_depth = 5, verbose = 1)
+oGraph <- makeGraph(oSetting, oStart, oGoalCondition, max_depth = 5, verbose = 0)
 
 # plot
 plotGraph(oGraph, method = "GGally")
 
 # show shortest pathes
 lSolution <- getShortestPaths(oGraph)
-print(lSolution$state)
-print(lSolution$transition)
+
+test_that(
+  "solution is right", {
+  expect_equal(lSolution$transition[[1]] , c("12R", "22U", "23L", "33U"))
+})

@@ -12,7 +12,7 @@ Used to show verbose messages in \code{makeGraph} function.}
 
 \item{setting}{a object of 'slidepzl_setting' class.}
 
-\item{check_valid}{logical. Raise error if the state is invalid?}
+\item{error_invalid}{logical. Raise error if the state is invalid?}
 }
 \value{
 a character matrix.
