@@ -46,6 +46,7 @@ stopifnot(isValidState(oGoalCondition, oSetting))
 oGraph <- makeGraph(oSetting, oStart, oGoalCondition, max_depth = 5, verbose = 1)
 
 # plot
+set.seed(123)
 plotGraph(oGraph, method = "GGally")
 
 # show shortest pathes

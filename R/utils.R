@@ -647,6 +647,9 @@ plotGraph <- function(
       label           = vlabel,
       edge.label      = elabel,
       edge.label.size = 4,
+      arrow.size      = 6,
+      arrow.gap       = 0.025,
+      arrow.type      = "closed",
       color           = status_color[V(g)$status]
     )
   }

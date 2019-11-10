@@ -7,7 +7,15 @@
 
 <!-- badges: end -->
 
-Analyze sliding puzzle.
+`rSlidePzl` package provides funtions to analyze [sliding
+puzzle](https://en.wikipedia.org/wiki/Sliding_puzzle).
+
+With `rSlidePzl::makeGraph` function, you can make a network graph
+representing possible ‘states’ (snapshots of board) and transition
+relationships between states.
+
+You can examine the property of the graph with `igraph` package, or any
+other software for network analysis (e.g. [Gephi](https://gephi.org/)).
 
 ## Installation
 
@@ -17,6 +25,29 @@ devtools::install_github("shigono/rSlidePzl")
 ```
 
 ## Example
+
+Suppose you have a simple sliding puzzle with 8 pieces. The size of
+board is 3 x 3. The size of each pieces is 1 x 1.
+
+The initial state is:
+
+|      | col1 | col2 | col3 |
+| ---- | :--- | :--- | :--- |
+| row1 | A    | C    |      |
+| row2 | D    | B    | E    |
+| row3 | F    | G    | F    |
+
+Your goal is:
+
+|      | col1 | col2 | col3 |
+| ---- | :--- | :--- | :--- |
+| row1 | A    | B    | C    |
+| row2 | D    | E    | F    |
+| row3 | G    | H    |      |
+
+Let’s try to analyse this puzzle with `rSlidePzl` package.
+
+### make a network graph
 
 ``` r
 library(rSlidePzl)
@@ -68,56 +99,75 @@ oGoalCondition <- makeState(
 )
 stopifnot(isValidState(oGoalCondition, oSetting))
 
-# analyse the puzzle and make a network graph of states
-oGraph <- makeGraph(oSetting, oStart, oGoalCondition, max_depth = 5, verbose = 1)
-#> Processed # 1 (depth 0 ) of 3 states; goal 0 ; 2 transitions
-#> Processed # 2 (depth 1 ) of 5 states; goal 0 ; 4 transitions
-#> Processed # 3 (depth 1 ) of 7 states; goal 0 ; 6 transitions
-#> Processed # 4 (depth 2 ) of 8 states; goal 0 ; 7 transitions
-#> Processed # 5 (depth 2 ) of 11 states; goal 0 ; 10 transitions
-#> Processed # 6 (depth 2 ) of 14 states; goal 0 ; 13 transitions
-#> Processed # 7 (depth 2 ) of 15 states; goal 0 ; 14 transitions
-#> Processed # 8 (depth 3 ) of 17 states; goal 0 ; 16 transitions
-#> Processed # 9 (depth 3 ) of 19 states; goal 0 ; 18 transitions
-#> Processed # 10 (depth 3 ) of 21 states; goal 1 ; 20 transitions
-#> Processed # 11 (depth 3 ) of 23 states; goal 1 ; 22 transitions
-#> Processed # 12 (depth 3 ) of 25 states; goal 1 ; 24 transitions
-#> Processed # 13 (depth 3 ) of 27 states; goal 1 ; 26 transitions
-#> Processed # 14 (depth 3 ) of 29 states; goal 1 ; 28 transitions
-#> Processed # 15 (depth 3 ) of 31 states; goal 1 ; 30 transitions
-#> Processed # 16 (depth 4 ) of 34 states; goal 1 ; 33 transitions
-#> Processed # 17 (depth 4 ) of 35 states; goal 1 ; 34 transitions
-#> Processed # 18 (depth 4 ) of 36 states; goal 1 ; 35 transitions
-#> Processed # 19 (depth 4 ) of 37 states; goal 1 ; 36 transitions
-#> Processed # 20 (depth 4 ) of 38 states; goal 1 ; 37 transitions
-#> Processed # 22 (depth 4 ) of 39 states; goal 1 ; 38 transitions
-#> Processed # 23 (depth 4 ) of 40 states; goal 1 ; 39 transitions
-#> Processed # 24 (depth 4 ) of 41 states; goal 1 ; 40 transitions
-#> Processed # 25 (depth 4 ) of 42 states; goal 1 ; 41 transitions
-#> Processed # 26 (depth 4 ) of 43 states; goal 1 ; 42 transitions
-#> Processed # 27 (depth 4 ) of 44 states; goal 1 ; 43 transitions
-#> Processed # 28 (depth 4 ) of 45 states; goal 1 ; 44 transitions
-#> Processed # 29 (depth 4 ) of 46 states; goal 1 ; 45 transitions
-#> Processed # 30 (depth 4 ) of 49 states; goal 1 ; 48 transitions
-#> Processed # 31 (depth 4 ) of 50 states; goal 1 ; 49 transitions
-# 
-# # plot
+# find all states within 5 moves and make a network graph of them
+oGraph <- makeGraph(oSetting, oStart, oGoalCondition, max_depth = 5, verbose = 0)
 plotGraph(oGraph, method = "GGally")
-#> Loading required package: ggplot2
 ```
 
-<img src="man/figures/README-example-1.png" width="100%" />
+<img src="man/figures/README-example1-1.png" width="100%" />
+
+The blue node (circle) in the plot represents the initial states. Other
+nodes are possible states you can generate by moving pieces within 5
+times.
+
+The edges between nodes represent transition relationships between node.
+For example, at inital state you have two choice: move a piece at (1,2)
+(piece C) right, or move a piece at (2,3) (piece E) upper.
+
+Notes that makeGraph() function can take VERY LONG time. I recommend to
+limit the search space by `max_depth` argument or `max_num_states`
+argument.
+
+It would be better to avoid to plot a large graph in R. Consider to use
+Gephi or some other software instead.
+
+### find best solutions
+
+The main purpose of `rSlidePzl` package is to make a network graph of
+possible states in given puzzle, not to get solutions of the puzzle. But
+in this case you have reached to the goal state (the red node in graph),
+so you can see a best solution.
+
+Your best moves are:
 
 ``` r
- 
 # # show shortest pathes
 lSolution <- getShortestPaths(oGraph)
-print(lSolution$state)
-#> [[1]]
-#> [1] "11A12C21D22B23E31G32H33F" "11A13C21D22B23E31G32H33F"
-#> [3] "11A12B13C21D23E31G32H33F" "11A12B13C21D22E31G32H33F"
-#> [5] "11A12B13C21D22E23F31G32H"
 print(lSolution$transition)
 #> [[1]]
 #> [1] "12R" "22U" "23L" "33U"
 ```
+
+It says: move a piece at (1,2) right,
+
+|      | col1 | col2 | col3 |
+| ---- | :--- | :--- | :--- |
+| row1 | A    |      | C    |
+| row2 | D    | B    | E    |
+| row3 | G    | H    | F    |
+
+move a piece at (2,2) upper,
+
+|      | col1 | col2 | col3 |
+| ---- | :--- | :--- | :--- |
+| row1 | A    | B    | C    |
+| row2 | D    |      | E    |
+| row3 | G    | H    | F    |
+
+move a piece at (2,3) left,
+
+|      | col1 | col2 | col3 |
+| ---- | :--- | :--- | :--- |
+| row1 | A    | B    | C    |
+| row2 | D    | E    |      |
+| row3 | G    | H    | F    |
+
+and move a piece at (3,3) upper.
+
+|      | col1 | col2 | col3 |
+| ---- | :--- | :--- | :--- |
+| row1 | A    | B    | C    |
+| row2 | D    | E    | F    |
+| row3 | G    | H    |      |
+
+Enjoy.
