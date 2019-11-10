@@ -1,33 +1,34 @@
 makeSetting <- function(boardsize, piecesize){
   #' make setting of a sliding puzzle
   #'
+  #' @export
   #' @param boardsize a numeric vector of length 2.
   #'                  (number of rows, number of columns) of the board.
-  #'                  it should be >= 1 and <= 9.
-  #' @param piecesize a named list. it should have unduplicated names.
-  #'                  name:  a alphabetic character. case sensitive.
-  #'                         'type' of piece.
-  #'                  value: a numeric vector of length 2.
-  #'                         (vertical size, horizontal size) of the type of piece.
-  #' @return an object of class "slidepzl_setting", which is a list with following elements:
-  #'         boardsize: (number of rows, number of columns) of the board.
-  #'         piecearea: a named list.
-  #'                    name:  'type' of piece.
-  #'                    value: a numeric matrix of size (k,2).
-  #'                           relative locations of cells which the type of piece occupies.
-  #' @examples
-  #' makeSPSetting(
-  #'   boardsize = c(3,3),
-  #'   piecesize = list(
-  #'     "A" = c(1,1),
-  #'     "B" = c(1,1),
-  #'     "C" = c(1,1),
-  #'     "D" = c(1,1),
-  #'     "E" = c(1,1),
-  #'     "F" = c(1,1),
-  #'     "G" = c(1,1)
-  #'   )
-  #' )
+  #'                  Should be >= 1 and <= 9.
+  #'
+  #' @param piecesize a named list.
+  #'                  The name of each element should be a alphabetic character.
+  #'                  Case sensitive.
+  #'                  Duplicated names are not allowed.
+  #'                  Each element should be a numeric vector of length 2,
+  #'                  giving (vertical size, horizontal size) of the type of piece.
+  #'
+  #' @return an object of class 'slidepzl_setting',
+  #'         which is a list with following elements:
+  #'         \describe{
+  #'           \item{boardsize}{
+  #'             same as \code{boardsize} argument
+  #'           }
+  #'           \item{piecearea}{
+  #'             a named list.
+  #'             The name of each element is a alphabetic character,
+  #'             giving the 'type' of piece.
+  #'             Each element is a numeric matrix of size (k,2),
+  #'             giving relative locations of cells which that type of piece occupies.
+  #'           }
+  #'         }
+  #'
+  #' @example example/makeSetting.R
 
   # trap: boardsize
   stopifnot(is.numeric(boardsize))
@@ -70,13 +71,20 @@ makeSetting <- function(boardsize, piecesize){
 makePiece <- function(type, loc){
   #' make a piece
   #'
-  #' @param type a alphabetic character. case sensitive. giving 'type' of piece.
-  #' @param loc  a numeric vector of length 2.
-  #'             giving the location of the piece
-  #'             ((row, column) of the upper left corner of the piece).
+  #' @export
+  #' @param type a alphabetic character giving 'type' of piece. Case sensitive.
+  #' @param loc  a numeric vector of length 2,
+  #'             giving the location (row, column) of the upper left corner
+  #'             of the piece.
   #' @return an object of class "slidepzl_piece", which is a list with following elements:
-  #'         type: 'type' of piece
-  #'         loc:  location of piece
+  #'         \describe{
+  #'           \item{type}{'type' of piece}
+  #'           \item{loc}{location of piece}
+  #'         }
+  #' @examples
+  #' # a piece of type 'A' is on the board,
+  #' # whose upper left corner is located at (1, 1)
+  #' makePiece('A', c(1,1))
 
   # trap: type
   stopifnot(type %in% c(LETTERS, letters))
@@ -94,7 +102,7 @@ makePiece <- function(type, loc){
   return(out)
 }
 as.character.slidepzl_piece <- function(piece){
-  #' convert the location of a piece into a string.
+  #' Internal. Convert the location of a piece into a string.
   #'
   #' @param piece a object of 'slidepzl_piece' class.
   #' @return a character string of length 3
@@ -106,15 +114,24 @@ as.character.slidepzl_piece <- function(piece){
   paste0(c(as.character(piece$loc), piece$type), collapse = "")
 }
 makeState <- function(pieces){
-  #' make a state (or condition of states)
+  #' make a state of a puzzle, or goal conditions of a puzzle
   #'
+  #' @export
   #' @param pieces a list of objects of 'slidepzl_piece' class.
   #' @return an object of class "slidepzl_state", which is a list with following elements:
-  #'         piecetypes: a character vector.
-  #'                     the ith element gives the 'type' of ith piece.
-  #'         piecelocs:  a numeric matrix of size (num.pieces, 2).
-  #'                     the ith row gives (row, column) of upper left corner of ith piece.
-  #'         validity is not guaranteed.
+  #'         \describe{
+  #'           \item{piecetypes}{
+  #'             a character vector, whose ith element gives the 'type' of ith piece.
+  #'           }
+  #'           \item{piecelocs}{
+  #'           a numeric matrix of size (k, 2),
+  #'           where k is the number of pieces on the board.
+  #'           The ith row gives (row, column) of the upper left corner
+  #'           of the ith piece.
+  #'           }
+  #'         }
+  #'         Validity of the state is not guaranteed.
+  #' @example example/makeState.R
 
   # trap: pieces
   stopifnot(sapply(pieces, function(x) 'slidepzl_piece' %in% class(x)))
@@ -135,9 +152,11 @@ makeState <- function(pieces){
 isValidState <- function(state, setting){
   #' check the validity of state
   #'
+  #' @export
   #' @param state an object of 'slidepzl_state' class.
   #' @param setting an object of 'slidepzl_setting' class.
   #' @return logical. is the state valid?
+  #' @example example/isValidState.R
 
   # trap: state
   stopifnot("slidepzl_state" %in% class(state))
@@ -162,12 +181,13 @@ isValidState <- function(state, setting){
     TRUE, FALSE
   )
 }
-as.matrix.slidepzl_state <- function(state, setting, check_valid = T){
-  #' convert a state into a character matrix.
+as.matrix.slidepzl_state <- function(state, setting, error_invalid = TRUE){
+  #' Internal. Convert a state into a character matrix.
+  #' Used to show verbose messages in \code{makeGraph} function.
   #'
   #' @param state a object of 'slidepzl_state' class.
   #' @param setting a object of 'slidepzl_setting' class.
-  #' @param check_valid logical. check the validity of the state?
+  #' @param check_valid logical. Raise error if the state is invalid?
   #' @return a character matrix.
 
   # trap: state
@@ -213,7 +233,7 @@ as.matrix.slidepzl_state <- function(state, setting, check_valid = T){
   return(out)
 }
 as.character.slidepzl_state <- function(state){
-  #' convert a state into a vector of character string.
+  #' Internal. Convert a state into a vector of character string.
   #'
   #' @param state an object of 'slidepzl_state' class.
   #' @return a character vector
@@ -233,13 +253,13 @@ as.character.slidepzl_state <- function(state){
   sort(paste0(asPiece, state$piecetype))
 }
 modifyState <- function(state, pieceid, diff){
-  #' move a piece.
+  #' Internal. Generate new state by moving a piece in a state.
   #'
   #' @param state an object of 'slidepzl_state' object.
   #' @param pieceid integer. the piece which is moved.
   #' @param diff a integer vector of length 2. direction of moving.
   #' @return an object of 'slidepzl_state' class.
-  #'         its validity is not guaranteed.
+  #'         Its validity is not guaranteed.
 
   # trap: state
   stopifnot("slidepzl_state" %in% class(state))
@@ -262,15 +282,16 @@ modifyState <- function(state, pieceid, diff){
   return(out)
 }
 makeNextStates <- function(state, setting){
-  #' return possible next states from a state.
+  #' Internal. Return all states which can be generated by moving a piece of given state.
   #'
-  #' @param state an object of 'slidepzl_state' class.
+  #' @param state an object of 'slidepzl_state' class. Original state.
   #' @param setting an object of 'slidepzl_setting' class.
-  #' @return a list of 'slidepzl_state' class.
-  #'         all of states which can be generated by moving a piece of
+  #' @return a list of objects of 'slidepzl_state' class, giving
+  #'         all states which can be generated by moving a piece of
   #'         the original state.
-  #'         their validity of guaranteed.
-  #'         the name of elements give how they are generated.
+  #'         Validity is guaranteed.
+  #'
+  #'         The name of elements give how they are generated.
   #'         e.g. '11D' means a piece at (1,1) in the original state is moved down.
 
   # trap: state
@@ -315,11 +336,11 @@ makeNextStates <- function(state, setting){
   return(lOut)
 }
 isGoalState <- function(state, goalcondition){
-  #' check if a state satisfy goal conditions.
+  #' Internal. Check if a state satisfy goal conditions.
   #'
   #' @param state an object of 'slidepzl_state' class.
   #' @param goalcondition an object of 'slidepzl_state' class.
-  #' @return logical. does the state include all pieces in goal conditions?
+  #' @return logical. Does the state include all pieces in goal conditions?
 
   # trap: state
   stopifnot("slidepzl_state" %in% class(state))
@@ -341,22 +362,51 @@ makeGraph <- function(
   max_num_states       = Inf,
   verbose              = 1
 ){
-  # purpose: ゲームを探索し、状態のネットワークを返す
-  # args:
-  #   oState:               slidepzl_state型 初期盤面
-  #   oGoalCondition:       slidepzl_state型 目標条件
-  #   oPieceDictionary:     slidepzl_dic型 コマ辞書
-  #   nInitSize_States:     盤面DBの初期サイズ
-  #                         盤面の数がこれを超過すると動作が遅くなるであろう
-  #   nInitSize_Transition: 遷移DBの初期サイズ。遷移数がこれを超過すると
-  #                         動作が遅くなるであろう
-  #   nMaxDepth:            探索する深さの最大値
-  #   nMaxNumStates:        探索する盤面数の最大値
-  #   verbose:              0(表示なし), 1(簡易表示), 2(フル表示)
+  #' make a network graph of possible states of given sliding puzzle.
+  #'
+  #' @export
+  #' @param setting an object of 'slidepzl_setting' class. Setting of a puzzle.
+  #' @param state an object of 'slidepzl_state' class. Initial state.
+  #' @param goalcondition an object of 'slidepzl_state' class. Conditions of goal.
+  #' @param initsize_states initial size of database of states.
+  #'        Execution of this function may slow down when more states are found
+  #'        than \code{initsize_states}.
+  #' @param initsize_transitions initial size of database of transition.
+  #'        Execution of this function may slow down when more transition are found
+  #'        than \code{initsize_transitions}.
+  #' @param max_depth max depth of states to search.
+  #' @param max_num_states max number of states to find.
+  #' @param verbose 0:no message, 1:normal messages, 2:full messsages.
+  #' @return an object of 'igraph' class.
+  #'
+  #'         Vertexes and edges represents states and transition
+  #'         between states, respectively.
+  #'
+  #'         Include following information as attributes of vertexes:
+  #'         \describe{
+  #'           \item{name}{character string, representing a state}
+  #'           \item{depth}{integer, representing depth of the state}
+  #'           \item{status}{1:the initial state, 2:a state
+  #'           which is examined, 3:a state which is not examined,
+  #'           4: a goal state}
+  #'         }
+  #'
+  #'         Include following information as attributes of edges:
+  #'         \describe{
+  #'           \item{name}{which piece is moved to which direction.
+  #'           e.g. "11U" means a piece located at (1,1) in original
+  #'           state is moved up.}
+  #'         }
+  #'
+  #'
+  #' @importFrom data.table chmatch
+  #' @importFrom igraph graph_from_edgelist
+  #' @importFrom igraph V
+  #' @importFrom igraph E
+  #' @importFrom igraph "V<-"
+  #' @example example/makeGraph.R
 
-  library(data.table)
-  library(igraph)
-
+  # trap
   stopifnot("slidepzl_setting" %in% class(setting))
   stopifnot("slidepzl_state" %in% class(state))
   stopifnot("slidepzl_state" %in% class(goalcondition))
@@ -510,10 +560,9 @@ makeGraph <- function(
 
   E(g)$name   <- asTransition[1:nNumTransition]
 
-  class(g) <- append(class(g), "slidepzl_graph", after = 0)
   return(g)
 }
-plot.slidepzl_graph <- function(
+plotGraph <- function(
   g,
   status_color = c("blue", "skyblue", "gray", "red"),
   status_label = FALSE,
@@ -521,6 +570,30 @@ plot.slidepzl_graph <- function(
   method       = 'igraph',
   ...
 ){
+  #' plot the network graph.
+  #'
+  #' Provide easy way to plot the network graph generated by
+  #' \code{makeGraph} function.
+  #'
+  #' To plot with more detailed
+  #' specification, use \code{igraph::tkplot} function or
+  #' \code{GGally::ggnet2} function instead.
+  #'
+  #' see \code{\link{makeGraph}} for example code.
+  #'
+  #' @export
+  #' @param g an object generated by \code{makeGraph} function.
+  #' @param status_color a vector of color, length 4.
+  #'                     Color of (initial, unexamined,
+  #'                     examined, goal) states (i.e. nodes).
+  #' @param status_label logical. show labels of states?
+  #' @param move_label logical. show labels of transition?
+  #' @param method 'igraph': use igraph package; 'GGally': use GGally package.
+  #' @importFrom igraph E
+  #' @importFrom igraph V
+  #' @importFrom igraph plot.igraph
+  #' @importFrom GGally ggnet2
+  #'
 
   stopifnot(method %in% c('igraph', "GGally"))
 
@@ -539,7 +612,6 @@ plot.slidepzl_graph <- function(
       elabel = NA
     }
 
-    class(g) <- 'igraph'
     plot.igraph(
       g,
       vertex.size        = 8,
@@ -572,7 +644,6 @@ plot.slidepzl_graph <- function(
       elabel = FALSE
     }
 
-    class(g) <- 'igraph'
     ggnet2(
       g,
       size            = 6,
@@ -587,10 +658,28 @@ plot.slidepzl_graph <- function(
 
 
 getShortestPaths <- function(g, target = NULL){
+  #' get shortest paths
+  #'
+  #' Get shortest path from initial states to goal states
+  #' (or to specified states).
+  #'
+  #' see \code{\link{makeGraph}} for example code.
+  #'
+  #' @export
+  #' @param g an 'igraph' object generated by \code{makeGraph} function.
+  #' @param target a numerical vector, which gives
+  #'               IDs of target states. NULL means IDs of goal states.
+  #' @return a list with following elements:
+  #'         \describe{
+  #'           \item{state} a list of character vectors.
+  #'           ith element gives states in ith pathes.
+  #'           \item{transition} a list of character vectors.
+  #'           ith element gives transitions in ith pathes.
+  #'         }
+  #'
 
   library(igraph)
 
-  stopifnot('slidepzl_graph' %in% class(g))
   stopifnot(is.igraph(g))
 
   if (is.null(target)){
@@ -619,7 +708,7 @@ getShortestPaths <- function(g, target = NULL){
     }
   )
 
-  list(state = lState, move = lMove)
+  list(state = lState, transition = lMove)
 }
 
 

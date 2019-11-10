@@ -2,20 +2,22 @@
 % Please edit documentation in R/utils.R
 \name{as.matrix.slidepzl_state}
 \alias{as.matrix.slidepzl_state}
-\title{convert a state into a character matrix.}
+\title{Internal. Convert a state into a character matrix.
+Used to show verbose messages in \code{makeGraph} function.}
 \usage{
-\method{as.matrix}{slidepzl_state}(state, setting, check_valid = T)
+\method{as.matrix}{slidepzl_state}(state, setting, error_invalid = TRUE)
 }
 \arguments{
 \item{state}{a object of 'slidepzl_state' class.}
 
 \item{setting}{a object of 'slidepzl_setting' class.}
 
-\item{check_valid}{logical. check the validity of the state?}
+\item{check_valid}{logical. Raise error if the state is invalid?}
 }
 \value{
 a character matrix.
 }
 \description{
-convert a state into a character matrix.
+Internal. Convert a state into a character matrix.
+Used to show verbose messages in \code{makeGraph} function.
 }

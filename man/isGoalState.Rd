@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{isGoalState}
 \alias{isGoalState}
-\title{check if a state satisfy goal conditions.}
+\title{Internal. Check if a state satisfy goal conditions.}
 \usage{
 isGoalState(state, goalcondition)
 }
@@ -12,8 +12,8 @@ isGoalState(state, goalcondition)
 \item{goalcondition}{an object of 'slidepzl_state' class.}
 }
 \value{
-logical. does the state include all pieces in goal conditions?
+logical. Does the state include all pieces in goal conditions?
 }
 \description{
-check if a state satisfy goal conditions.
+Internal. Check if a state satisfy goal conditions.
 }

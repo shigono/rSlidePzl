@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{makeState}
 \alias{makeState}
-\title{make a state (or condition of states)}
+\title{make a state of a puzzle, or goal conditions of a puzzle}
 \usage{
 makeState(pieces)
 }
@@ -11,12 +11,33 @@ makeState(pieces)
 }
 \value{
 an object of class "slidepzl_state", which is a list with following elements:
-        piecetypes: a character vector.
-                    the ith element gives the 'type' of ith piece.
-        piecelocs:  a numeric matrix of size (num.pieces, 2).
-                    the ith row gives (row, column) of upper left corner of ith piece.
-        validity is not guaranteed.
+        \describe{
+          \item{piecetypes}{
+            a character vector, whose ith element gives the 'type' of ith piece.
+          }
+          \item{piecelocs}{
+          a numeric matrix of size (k, 2),
+          where k is the number of pieces on the board.
+          The ith row gives (row, column) of the upper left corner
+          of the ith piece.
+          }
+        }
+        Validity of the state is not guaranteed.
 }
 \description{
-make a state (or condition of states)
+make a state of a puzzle, or goal conditions of a puzzle
+}
+\examples{
+mystate <- makeState(
+  list(
+    makePiece(type = "A", loc = c(1,1)),
+    makePiece(type = "B", loc = c(1,2)),
+    makePiece(type = "C", loc = c(1,3)),
+    makePiece(type = "D", loc = c(2,1)),
+    makePiece(type = "E", loc = c(2,2)),
+    makePiece(type = "F", loc = c(2,3)),
+    makePiece(type = "G", loc = c(3,1)),
+    makePiece(type = "H", loc = c(3,2))
+  )
+)
 }

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{as.character.slidepzl_piece}
 \alias{as.character.slidepzl_piece}
-\title{convert the location of a piece into a string.}
+\title{Internal. Convert the location of a piece into a string.}
 \usage{
 \method{as.character}{slidepzl_piece}(piece)
 }
@@ -13,5 +13,5 @@
 a character string of length 3
 }
 \description{
-convert the location of a piece into a string.
+Internal. Convert the location of a piece into a string.
 }

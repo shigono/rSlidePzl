@@ -9,27 +9,36 @@ makeSetting(boardsize, piecesize)
 \arguments{
 \item{boardsize}{a numeric vector of length 2.
 (number of rows, number of columns) of the board.
-it should be >= 1 and <= 9.}
+Should be >= 1 and <= 9.}
 
-\item{piecesize}{a named list. it should have unduplicated names.
-name:  a alphabetic character. case sensitive.
-       'type' of piece.
-value: a numeric vector of length 2.
-       (vertical size, horizontal size) of the type of piece.}
+\item{piecesize}{a named list.
+The name of each element should be a alphabetic character.
+Case sensitive.
+Duplicated names are not allowed.
+Each element should be a numeric vector of length 2,
+giving (vertical size, horizontal size) of the type of piece.}
 }
 \value{
-an object of class "slidepzl_setting", which is a list with following elements:
-        boardsize: (number of rows, number of columns) of the board.
-        piecearea: a named list.
-                   name:  'type' of piece.
-                   value: a numeric matrix of size (k,2).
-                          relative locations of cells which the type of piece occupies.
+an object of class 'slidepzl_setting',
+        which is a list with following elements:
+        \describe{
+          \item{boardsize}{
+            same as \code{boardsize} argument
+          }
+          \item{piecearea}{
+            a named list.
+            The name of each element is a alphabetic character,
+            giving the 'type' of piece.
+            Each element is a numeric matrix of size (k,2),
+            giving relative locations of cells which that type of piece occupies.
+          }
+        }
 }
 \description{
 make setting of a sliding puzzle
 }
 \examples{
-makeSPSetting(
+mysetting <- makeSetting(
   boardsize = c(3,3),
   piecesize = list(
     "A" = c(1,1),

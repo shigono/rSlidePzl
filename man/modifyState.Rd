@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{modifyState}
 \alias{modifyState}
-\title{move a piece.}
+\title{Internal. Generate new state by moving a piece in a state.}
 \usage{
 modifyState(state, pieceid, diff)
 }
@@ -15,8 +15,8 @@ modifyState(state, pieceid, diff)
 }
 \value{
 an object of 'slidepzl_state' class.
-        its validity is not guaranteed.
+        Its validity is not guaranteed.
 }
 \description{
-move a piece.
+Internal. Generate new state by moving a piece in a state.
 }

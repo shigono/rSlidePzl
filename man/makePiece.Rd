@@ -7,17 +7,24 @@
 makePiece(type, loc)
 }
 \arguments{
-\item{type}{a alphabetic character. case sensitive. giving 'type' of piece.}
+\item{type}{a alphabetic character giving 'type' of piece. Case sensitive.}
 
-\item{loc}{a numeric vector of length 2.
-giving the location of the piece
-((row, column) of the upper left corner of the piece).}
+\item{loc}{a numeric vector of length 2,
+giving the location (row, column) of the upper left corner
+of the piece.}
 }
 \value{
 an object of class "slidepzl_piece", which is a list with following elements:
-        type: 'type' of piece
-        loc:  location of piece
+        \describe{
+          \item{type}{'type' of piece}
+          \item{loc}{location of piece}
+        }
 }
 \description{
 make a piece
+}
+\examples{
+# a piece of type 'A' is on the board,
+# whose upper left corner is located at (1, 1)
+makePiece('A', c(1,1))
 }
