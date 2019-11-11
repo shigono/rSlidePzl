@@ -685,19 +685,20 @@ getShortestPaths <- function(g, target = NULL){
     target <- seq_along(V(g))[V(g)$status == 4]
   }
   stopifnot(length(target) > 0)
+  stopifnot(target %in% seq_along(V(g)))
 
-  lPath <- all_shortest_paths(g, from = 1, to = target, mode = "all")
-  anPathLength <- sapply(lPath$res, length)
+  anDepth <- as.integer(V(g)$depth)
+  anTarget <- target[anDepth == min(anDepth)]
 
-  lPathRes <- lPath$res[anPathLength == min(anPathLength)]
+  lPath <- all_shortest_paths(g, from = 1, to = anTarget, mode = "all")
 
   lState <- lapply(
-    lPathRes,
+    lPath$res,
     function(x) x$name
   )
 
   lMove <- lapply(
-    lPathRes,
+    lPath$res,
     function(nodes){
       anStateID <- as.integer(nodes)
       mnStateID <- matrix(NA, nrow = length(anStateID) - 1, 2)

@@ -48,6 +48,7 @@ plotGraph(oGraph, method = "GGally")
 
 # show shortest pathes
 lSolution <- getShortestPaths(oGraph)
+print(lSolution$transition)
 
 test_that(
   "solution is right", {
