@@ -47,10 +47,16 @@ oGraph <- makeGraph(oSetting, oStart, oGoalCondition, max_depth = 5, verbose = 0
 plotGraph(oGraph, method = "GGally")
 
 # show shortest pathes
-lSolution <- getShortestPaths(oGraph)
-print(lSolution$transition)
+lSolutions <- getAllShortestPaths(oGraph)
+
+lSolution <- getShortestPath(oGraph)
+print(lSolution)
 
 test_that(
-  "solution is right", {
-  expect_equal(lSolution$transition[[1]] , c("12R", "22U", "23L", "33U"))
+  "lSolutions is right", {
+  expect_equal(lSolutions$transition[[1]] , c("12R", "22U", "23L", "33U"))
+})
+test_that(
+  "Solution is right", {
+    expect_equal(lSolution$transition , c("12R", "22U", "23L", "33U"))
 })

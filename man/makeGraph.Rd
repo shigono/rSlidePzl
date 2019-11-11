@@ -107,7 +107,7 @@ set.seed(123)
 plotGraph(oGraph, method = "GGally")
 
 # show shortest pathes
-lSolution <- getShortestPaths(oGraph)
+lSolution <- getAllShortestPaths(oGraph)
 print(lSolution$state)
 print(lSolution$transition)
 }
