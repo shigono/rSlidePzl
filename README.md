@@ -7,15 +7,16 @@
 
 <!-- badges: end -->
 
-`rSlidePzl` package provides funtions to analyze [sliding
+`rSlidePzl` package provides some funtions to analyze [sliding
 puzzle](https://en.wikipedia.org/wiki/Sliding_puzzle).
 
-With `rSlidePzl::makeGraph` function, you can make a network graph
-representing possible ‘states’ (snapshots of board) and transition
-relationships between states.
+The main workhouse is `makeGraph` function, by which you can make a
+network graph representing possible ‘states’ (i.e. snapshots of the
+board) and transition relationships between them.
 
-You can examine the property of the graph with `igraph` package, or any
-other software for network analysis (e.g. [Gephi](https://gephi.org/)).
+You can examine the property of the graph with [`igraph`
+package](https://igraph.org/r/), or any other tools for network analysis
+(e.g. [Gephi](https://gephi.org/)).
 
 ## Installation
 
@@ -27,9 +28,7 @@ devtools::install_github("shigono/rSlidePzl")
 ## Example
 
 Suppose you have a simple sliding puzzle with 8 pieces. The size of
-board is 3 x 3. The size of each pieces is 1 x 1.
-
-The initial state is:
+board is 3 x 3. The size of all pieces is 1 x 1. The initial state is:
 
 |      | col1 | col2 | col3 |
 | ---- | :--- | :--- | :--- |
@@ -106,35 +105,38 @@ plotGraph(oGraph, method = "GGally")
 
 <img src="man/figures/README-example1-1.png" width="100%" />
 
-The blue node (circle) in the plot represents the initial states. Other
+The blue node (circle) in the plot represents the initial state. Other
 nodes are possible states you can generate by moving pieces within 5
-times.
+times. The red node represents the goal state.
 
-The edges between nodes represent transition relationships between node.
-For example, at inital state you have two choice: move a piece at (1,2)
-(piece C) right, or move a piece at (2,3) (piece E) upper.
+The edges between nodes represent transition relationships between
+nodes. For example, the blue node has two edges labeled as “12R” and
+“23U”. It says that at the inital state you have two choice: move a
+piece at (1,2) (i.e. “C”) right, or move a piece at (2,3) (“E”) upper.
 
-Notes that makeGraph() function can take VERY LONG time. I recommend to
-limit the search space by `max_depth` argument or `max_num_states`
-argument.
+By default, `makeGraph` function search all states which are reachable
+from the initial state without passing through the goal states. This
+exhaustive search can take very long time, and the returned graph can be
+huge. You can limit your search space by `max_depth` argument or
+`max_num_states` argument.
 
-It would be better to avoid to plot a large graph in R. Consider to use
-Gephi or some other software instead.
+`rSlidePzl` package also provides `plotGraph` function to plot a small
+network graph. Consider to use Gephi or some other software for large
+graphs.
 
 ### find best solutions
 
-The main purpose of `rSlidePzl` package is to make a network graph of
-possible states in given puzzle, not to get solutions of the puzzle. But
-in this case you have reached to the goal state (the red node in graph),
-so you can see a best solution.
+Though the main focus of `rSlidePzl` package is not to get solutions of
+given puzzle but to generate a network graph, this package have some
+helper functions to extract solutions from the graph.
 
-Your best moves are:
+In this example, you have only one path which is shortest. Your best
+moves are:
 
 ``` r
 # # show shortest pathes
-lSolution <- getShortestPaths(oGraph)
+lSolution <- getShortestPath(oGraph)
 print(lSolution$transition)
-#> [[1]]
 #> [1] "12R" "22U" "23L" "33U"
 ```
 
@@ -170,4 +172,4 @@ and move a piece at (3,3) upper.
 | row2 | D    | E    | F    |
 | row3 | G    | H    |      |
 
-Enjoy.
+I hope you enjoy.

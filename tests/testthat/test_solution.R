@@ -50,7 +50,6 @@ plotGraph(oGraph, method = "GGally")
 lSolutions <- getAllShortestPaths(oGraph)
 
 lSolution <- getShortestPath(oGraph)
-print(lSolution)
 
 test_that(
   "lSolutions is right", {
@@ -60,3 +59,11 @@ test_that(
   "Solution is right", {
     expect_equal(lSolution$transition , c("12R", "22U", "23L", "33U"))
 })
+test_that(
+  "Reachability is right", {
+    expect_equal(
+      getReachablity(oGraph),
+      c(1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
+    )
+  }
+)

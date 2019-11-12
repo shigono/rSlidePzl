@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{modifyState}
 \alias{modifyState}
-\title{Internal. Generate new state by moving a piece in a state.}
+\title{generate new state by moving a piece in a state}
 \usage{
 modifyState(state, pieceid, diff)
 }
@@ -11,11 +11,10 @@ modifyState(state, pieceid, diff)
 
 \item{pieceid}{integer. the piece which is moved.}
 
-\item{diff}{a integer vector of length 2. direction of moving.}
+\item{diff}{a integer vector of length 2, giving the direction to move.}
 }
 \value{
-an object of 'slidepzl_state' class.
-        Its validity is not guaranteed.
+an object of 'slidepzl_state' class, which can be invalid.
 }
 \description{
 Internal. Generate new state by moving a piece in a state.

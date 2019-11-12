@@ -8,15 +8,19 @@ makeSetting(boardsize, piecesize)
 }
 \arguments{
 \item{boardsize}{a numeric vector of length 2.
-(number of rows, number of columns) of the board.
-Should be >= 1 and <= 9.}
+
+                 (number of rows, number of columns) of the board.
+                 Should be >= 1 and <= 9.}
 
 \item{piecesize}{a named list.
-The name of each element should be a alphabetic character.
-Case sensitive.
-Duplicated names are not allowed.
-Each element should be a numeric vector of length 2,
-giving (vertical size, horizontal size) of the type of piece.}
+
+                 The name of each element should be a alphabetic character
+                 representing a type of piece. Case sensitive,
+                 duplicated names are not allowed.
+
+                 Each element should be a numeric vector of length 2,
+                 giving (vertical size, horizontal size) of that type of piece.
+                 Should be >= 1 and <= 9.}
 }
 \value{
 an object of class 'slidepzl_setting',
@@ -27,8 +31,10 @@ an object of class 'slidepzl_setting',
           }
           \item{piecearea}{
             a named list.
+
             The name of each element is a alphabetic character,
             giving the 'type' of piece.
+
             Each element is a numeric matrix of size (k,2),
             giving relative locations of cells which that type of piece occupies.
           }
@@ -50,4 +56,5 @@ mysetting <- makeSetting(
     "G" = c(1,1)
   )
 )
+mysetting
 }

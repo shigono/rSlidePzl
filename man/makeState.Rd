@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{makeState}
 \alias{makeState}
-\title{make a state of a puzzle, or goal conditions of a puzzle}
+\title{make a state (or goal conditions) of a puzzle}
 \usage{
 makeState(pieces)
 }
@@ -25,7 +25,7 @@ an object of class "slidepzl_state", which is a list with following elements:
         Validity of the state is not guaranteed.
 }
 \description{
-make a state of a puzzle, or goal conditions of a puzzle
+make a state (or goal conditions) of a puzzle
 }
 \examples{
 mystate <- makeState(

@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{as.character.slidepzl_state}
 \alias{as.character.slidepzl_state}
-\title{Internal. Convert a state into a vector of character string.}
+\title{convert a state into a vector of character string}
 \usage{
 \method{as.character}{slidepzl_state}(state)
 }
@@ -14,4 +14,5 @@ a character vector
 }
 \description{
 Internal. Convert a state into a vector of character string.
+It is concatenated and used for a search index of the state.
 }

@@ -10,3 +10,4 @@ mysetting <- makeSetting(
     "G" = c(1,1)
   )
 )
+mysetting

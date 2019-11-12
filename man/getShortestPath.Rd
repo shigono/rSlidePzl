@@ -15,12 +15,12 @@ IDs of target states. NULL means IDs of goal states.}
 \value{
 a list with following elements:
         \describe{
-          \item{state}{a character vector, giving the path.}
+          \item{state}{a character vector, giving states of the path.}
           \item{transition}{a character vectors,
-          giving the path.}
+          giving transitions of the path.}
         }
 }
 \description{
-Get a shortest path from initial states to goal states
+get one of the shortest path from initial states to goal states
 (or to specified states).
 }

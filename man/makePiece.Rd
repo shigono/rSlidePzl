@@ -11,7 +11,8 @@ makePiece(type, loc)
 
 \item{loc}{a numeric vector of length 2,
 giving the location (row, column) of the upper left corner
-of the piece.}
+of the piece.
+Should be >= 1 and <= 9.}
 }
 \value{
 an object of class "slidepzl_piece", which is a list with following elements:

@@ -2,8 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{as.matrix.slidepzl_state}
 \alias{as.matrix.slidepzl_state}
-\title{Internal. Convert a state into a character matrix.
-Used to show verbose messages in \code{makeGraph} function.}
+\title{convert a state into a character matrix}
 \usage{
 \method{as.matrix}{slidepzl_state}(state, setting, error_invalid = TRUE)
 }

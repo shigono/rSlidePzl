@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{isGoalState}
 \alias{isGoalState}
-\title{Internal. Check if a state satisfy goal conditions.}
+\title{check if a state satisfy goal conditions}
 \usage{
 isGoalState(state, goalcondition)
 }

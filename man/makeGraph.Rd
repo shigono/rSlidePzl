@@ -2,7 +2,7 @@
 % Please edit documentation in R/utils.R
 \name{makeGraph}
 \alias{makeGraph}
-\title{make a network graph of possible states of given sliding puzzle.}
+\title{make a network graph representing a given puzzle}
 \usage{
 makeGraph(setting, state, goalcondition, initsize_states = 1e+06,
   initsize_transitions = 2e+06, max_depth = Inf,
@@ -52,7 +52,10 @@ an object of 'igraph' class.
         }
 }
 \description{
-make a network graph of possible states of given sliding puzzle.
+executes breadth-first search of all states which are
+reachable from the initial state. The exception is
+when it reach a state with satisfying goal conditions: it stop to search
+further from the state.
 }
 \examples{
 # make setting of a sliding puzzle
