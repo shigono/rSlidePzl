@@ -62,7 +62,7 @@ test_that(
 test_that(
   "Reachability is right", {
     expect_equal(
-      getReachablity(oGraph),
+      getReachability(oGraph),
       c(1,1,0,0,1,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0)
     )
   }

@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Shigeru ONO
 Maintainer: Shigeru ONO <elsur_2001@yahoo.co.jp>
 Description: Generate a network of possible states of given sliding puzzle. 
-    Provide some utility functions, including a function to find shortest 
+    Provide some utility functions, including functions to find shortest 
     paths (i.e. best solutions).
 License: MIT + file LICENSE
 Encoding: UTF-8
