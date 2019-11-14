@@ -53,6 +53,10 @@ library(rSlidePzl)
 #> Registered S3 method overwritten by 'GGally':
 #>   method from   
 #>   +.gg   ggplot2
+#> Registered S3 methods overwritten by 'huge':
+#>   method    from   
+#>   plot.sim  BDgraph
+#>   print.sim BDgraph
 
 # make setting of a sliding puzzle
 oSetting <- makeSetting(
@@ -102,9 +106,9 @@ stopifnot(isValidState(oGoalCondition, oSetting))
 oGraph <- makeGraph(oSetting, oStart, oGoalCondition, max_depth = 5, verbose = 0)
 ```
 
-By default, `makeGraph` function search all states which are reachable
-from the initial state without passing through the goal states. This
-exhaustive search can take very long time, and the returned graph can be
+By default, `makeGraph` searchs all states which are reachable from the
+initial state without passing through the goal states. This exhaustive
+search process can take very long time, and the returned graph can be
 huge. You can limit your search space by `max_depth` argument or
 `max_num_states` argument.
 

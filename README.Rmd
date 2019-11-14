@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 <!-- badges: end -->
-
+ 
 `rSlidePzl` package provides some funtions to analyze 
 [sliding puzzle](https://en.wikipedia.org/wiki/Sliding_puzzle).
 
