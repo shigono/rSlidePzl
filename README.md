@@ -10,13 +10,13 @@
 `rSlidePzl` package provides some funtions to analyze [sliding
 puzzle](https://en.wikipedia.org/wiki/Sliding_puzzle).
 
-The main workhouse is `makeGraph` function, by which you can make a
-network graph representing possible ‘states’ (i.e. snapshots of the
-board) and transition relationships between them.
+A main workhouse of this package is `makeGraph` function, by which you
+can make a network graph representing possible ‘states’ (i.e. snapshots
+of the board) and transition relationships between them.
 
 You can examine the property of the graph with [`igraph`
 package](https://igraph.org/r/), or any other tools for network analysis
-(e.g. [Gephi](https://gephi.org/)).
+like [Gephi](https://gephi.org/).
 
 ## Installation
 
@@ -100,10 +100,26 @@ stopifnot(isValidState(oGoalCondition, oSetting))
 
 # find all states within 5 moves and make a network graph of them
 oGraph <- makeGraph(oSetting, oStart, oGoalCondition, max_depth = 5, verbose = 0)
+```
+
+By default, `makeGraph` function search all states which are reachable
+from the initial state without passing through the goal states. This
+exhaustive search can take very long time, and the returned graph can be
+huge. You can limit your search space by `max_depth` argument or
+`max_num_states` argument.
+
+### plot the graph
+
+`rSlidePzl` package also provides `plotGraph` function to plot a small
+network graph. Consider to use Gephi or some other software for large
+graphs.
+
+``` r
+set.seed(1)
 plotGraph(oGraph, method = "GGally")
 ```
 
-<img src="man/figures/README-example1-1.png" width="100%" />
+<img src="man/figures/README-example2-1.png" width="100%" />
 
 The blue node (circle) in the plot represents the initial state. Other
 nodes are possible states you can generate by moving pieces within 5
@@ -113,16 +129,6 @@ The edges between nodes represent transition relationships between
 nodes. For example, the blue node has two edges labeled as “12R” and
 “23U”. It says that at the inital state you have two choice: move a
 piece at (1,2) (i.e. “C”) right, or move a piece at (2,3) (“E”) upper.
-
-By default, `makeGraph` function search all states which are reachable
-from the initial state without passing through the goal states. This
-exhaustive search can take very long time, and the returned graph can be
-huge. You can limit your search space by `max_depth` argument or
-`max_num_states` argument.
-
-`rSlidePzl` package also provides `plotGraph` function to plot a small
-network graph. Consider to use Gephi or some other software for large
-graphs.
 
 ### find best solutions
 
