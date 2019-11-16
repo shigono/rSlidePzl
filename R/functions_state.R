@@ -219,7 +219,8 @@ isGoalState <- function(state, goalcondition){
   return(out)
 }
 makeGraph <- function(
-  setting, state, goalcondition,
+  setting, state,
+  goalcondition        = NULL,
   initsize_states      = 1000000,
   initsize_transitions = 2000000,
   max_depth            = Inf,
@@ -237,8 +238,8 @@ makeGraph <- function(
   #' @param setting an object of 'slidepzl_setting' class. Setting of a puzzle.
   #' @param state an object of 'slidepzl_state' class. Initial state.
   #'        It should be a valid state.
-  #' @param goalcondition an object of 'slidepzl_state' class. Conditions of goal.
-  #'        It should be a valid state.
+  #' @param goalcondition an object of 'slidepzl_state' class, or NULL.
+  #'        Conditions of goal. It should be a valid state if it is not NULL.
   #' @param initsize_states initial size of database of states.
   #'        Execution of this function may slow down when more states are found
   #'        than \code{initsize_states}.
@@ -277,13 +278,16 @@ makeGraph <- function(
   #' @importFrom igraph graph_from_edgelist
   #' @example example/makeGraph.R
 
-  # trap
+  # trap: setting
   stopifnot("slidepzl_setting" %in% class(setting))
+  # trap: state
   stopifnot("slidepzl_state" %in% class(state))
-  stopifnot("slidepzl_state" %in% class(goalcondition))
-
   stopifnot(isValidState(state, setting))
-  stopifnot(isValidState(goalcondition, setting))
+  # trap: goalcondition
+  if (!is.null(goalcondition)){
+    stopifnot("slidepzl_state" %in% class(goalcondition))
+    stopifnot(isValidState(goalcondition, setting))
+  }
 
   # state DB
   #   abActive:         過去のすべての盤面について、その遷移先をまだ調べていないものに1
@@ -309,7 +313,7 @@ makeGraph <- function(
   # 盤面DBに初期盤面を追加する
   nNumState   <- 1
   abActive[1] <- 1
-  abGoal[1]   <- isGoalState(state, goalcondition)
+  abGoal[1]   <- ifelse(is.null(goalcondition), 0, isGoalState(state, goalcondition))
   anDepth[1]  <- 0
   lState[[1]] <- state
   asState     <- paste0(as.character(state), collapse = "")
@@ -357,7 +361,11 @@ makeGraph <- function(
       # 盤面IDのベクトルを決める
       anAddStatesID <- nNumState + seq_along(lAddStates)
       # 終了判定
-      abGoalTemp <- sapply(lAddStates, function(x) isGoalState(x, goalcondition))
+      if (!is.null(goalcondition)){
+        abGoalTemp <- sapply(lAddStates, function(x) isGoalState(x, goalcondition))
+      } else {
+        abGoalTemp <- rep(FALSE, length(anAddStatesID))
+      }
       # 格納
       abActive[anAddStatesID] <- ifelse(abGoalTemp == 1, 0, 1)
       abGoal[anAddStatesID]   <- abGoalTemp

@@ -3,7 +3,6 @@
 \docType{package}
 \name{rSlidePzl}
 \alias{rSlidePzl}
-\alias{rSlidePzl-package}
 \title{rSlidePzl: A package for analyzing slide puzzles}
 \description{
 rSlidePzl: A package for analyzing slide puzzles

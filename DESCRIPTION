@@ -1,7 +1,7 @@
 Package: rSlidePzl
 Type: Package
 Title: Analyze sliding puzzles
-Version: 0.1.0
+Version: 0.1.1
 Author: Shigeru ONO
 Maintainer: Shigeru ONO <elsur_2001@yahoo.co.jp>
 Description: Generate a network of possible states of given sliding puzzle. 
@@ -10,7 +10,7 @@ Description: Generate a network of possible states of given sliding puzzle.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 6.1.1
+RoxygenNote: 7.0.0
 Suggests: 
     testthat
 Imports: 

@@ -4,9 +4,16 @@
 \alias{makeGraph}
 \title{make a network graph representing a given puzzle}
 \usage{
-makeGraph(setting, state, goalcondition, initsize_states = 1e+06,
-  initsize_transitions = 2e+06, max_depth = Inf,
-  max_num_states = Inf, verbose = 1)
+makeGraph(
+  setting,
+  state,
+  goalcondition = NULL,
+  initsize_states = 1e+06,
+  initsize_transitions = 2e+06,
+  max_depth = Inf,
+  max_num_states = Inf,
+  verbose = 1
+)
 }
 \arguments{
 \item{setting}{an object of 'slidepzl_setting' class. Setting of a puzzle.}
@@ -14,8 +21,8 @@ makeGraph(setting, state, goalcondition, initsize_states = 1e+06,
 \item{state}{an object of 'slidepzl_state' class. Initial state.
 It should be a valid state.}
 
-\item{goalcondition}{an object of 'slidepzl_state' class. Conditions of goal.
-It should be a valid state.}
+\item{goalcondition}{an object of 'slidepzl_state' class, or NULL.
+Conditions of goal. It should be a valid state if it is not NULL.}
 
 \item{initsize_states}{initial size of database of states.
 Execution of this function may slow down when more states are found
