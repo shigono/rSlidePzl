@@ -1,443 +1,353 @@
-isValidState <- function(state, setting){
-  #' check the validity of state
-  #'
-  #' @export
-  #' @param state an object of 'slidepzl_state' class.
-  #' @param setting an object of 'slidepzl_setting' class.
-  #' @return logical. is the state valid?
-  #' @example example/isValidState.R
+isValidState <- function(state, setting) {
+    #' check the validity of state
+    #'
+    #' @export
+    #' @param state an object of 'slidepzl_state' class.
+    #' @param setting an object of 'slidepzl_setting' class.
+    #' @return logical. is the state valid?
+    #' @example example/isValidState.R
 
-  # trap: state
-  stopifnot("slidepzl_state" %in% class(state))
-  # trap: setting
-  stopifnot("slidepzl_setting" %in% class(setting))
+    # trap: state
+    stopifnot("slidepzl_state" %in% class(state))
+    # trap: setting
+    stopifnot("slidepzl_setting" %in% class(setting))
 
-  # break
-  if (any(is.na(state$piecelocs)))
-    return(FALSE)
-  if (any(state$piecelocs <= 0))
-    return(FALSE)
-  if (any(state$piecelocs[,1] > setting$boardsize[1]))
-    return(FALSE)
-  if (any(state$piecelocs[,2] > setting$boardsize[2]))
-    return(FALSE)
-  if (anyDuplicated.matrix(state$piecelocs) != 0)
-    return(FALSE)
+    # break
+    if (any(is.na(state$piecelocs)))
+        return(FALSE)
+    if (any(state$piecelocs <= 0))
+        return(FALSE)
+    if (any(state$piecelocs[, 1] > setting$boardsize[1]))
+        return(FALSE)
+    if (any(state$piecelocs[, 2] > setting$boardsize[2]))
+        return(FALSE)
+    if (anyDuplicated.matrix(state$piecelocs) != 0)
+        return(FALSE)
 
-  lOccupied <- lapply(
-    seq_along(state$piecetype),
-    function(nRow){
-      mnArea <- setting$piecearea[[state$piecetype[nRow]]]
-      mnArea[,1] <- mnArea[,1] + state$piecelocs[nRow,1]
-      mnArea[,2] <- mnArea[,2] + state$piecelocs[nRow,2]
-      return(mnArea)
+    lOccupied <- lapply(seq_along(state$piecetype), function(nRow) {
+        mnArea <- setting$piecearea[[state$piecetype[nRow]]]
+        mnArea[, 1] <- mnArea[, 1] + state$piecelocs[nRow, 1]
+        mnArea[, 2] <- mnArea[, 2] + state$piecelocs[nRow, 2]
+        return(mnArea)
+    })
+    mnOccupied <- do.call(rbind, lOccupied)
+
+    ifelse(all(mnOccupied[, 1] %in% seq_len(setting$boardsize[1])) && all(mnOccupied[, 2] %in% seq_len(setting$boardsize[2])) &&
+        (nrow(unique(mnOccupied)) == nrow(mnOccupied)), TRUE, FALSE)
+}
+getNumStates <- function(state, setting, verbose = T) {
+    #' return number of possible states
+    #'
+    #' return number of possible states.
+    #' It can take a long time.
+    #'
+    #' @export
+    #' @param state an object of 'slidepzl_state' class.
+    #'              It can have NAs in locations of pieces.
+    #' @param setting an object of 'slidepzl_setting' class.
+    #' @param verbose logical. Show messages?
+    #' @return an integer.
+    #'         number of possible states.
+
+    # trap
+    stopifnot("slidepzl_state" %in% class(state))
+    stopifnot("slidepzl_setting" %in% class(setting))
+
+    if (verbose) {
+        cat("[getNumStates] the state has", sum(is.na(state$piecelocs)), "NA(s).\n")
     }
-  )
-  mnOccupied <- do.call(rbind, lOccupied)
 
-  ifelse(
-    all(mnOccupied[,1] %in% seq_len(setting$boardsize[1]))
-    && all(mnOccupied[,2] %in% seq_len(setting$boardsize[2]))
-    && (nrow(unique(mnOccupied)) == nrow(mnOccupied)) ,
-    TRUE, FALSE
-  )
-}
-getNumStates <- function(state, setting, verbose = T){
-  #' return number of possible states
-  #'
-  #' return number of possible states.
-  #' It can take a long time.
-  #'
-  #' @export
-  #' @param state an object of 'slidepzl_state' class.
-  #'              It can have NAs in locations of pieces.
-  #' @param setting an object of 'slidepzl_setting' class.
-  #' @param verbose logical. Show messages?
-  #' @return an integer.
-  #'         number of possible states.
+    # loop for each piece
+    lMissing <- lapply(seq_len(nrow(state$piecelocs)), function(nPieceNo) {
+        # get occupied area
+        mnPieceArea <- setting$piecearea[[state$piecetype[nPieceNo]]]
+        # get size
+        anPieceSize <- apply(mnPieceArea, 2, max) + 1
+        # possible rows
+        if (!is.na(state$piecelocs[nPieceNo, 1])) {
+            anPossibleRow <- state$piecelocs[nPieceNo, 1]
+        } else {
+            anPossibleRow <- seq(1, setting$boardsize[1] - anPieceSize[1] + 1)
+        }
+        # possible columns
+        if (!is.na(state$piecelocs[nPieceNo, 2])) {
+            anPossibleCol <- state$piecelocs[nPieceNo, 2]
+        } else {
+            anPossibleCol <- seq(1, setting$boardsize[2] - anPieceSize[2] + 1)
+        }
+        out <- list(anPossibleRow, anPossibleCol)
+        return(out)
+    })
+    lMissing <- unlist(lMissing, recursive = FALSE)
+    # row: possible state, col: elements of piecelocs
+    mnCandidate <- as.matrix(expand.grid(lMissing))
 
-  # trap
-  stopifnot("slidepzl_state" %in% class(state))
-  stopifnot("slidepzl_setting" %in% class(setting))
-
-  if (verbose){
-    cat("[getNumStates] the state has", sum(is.na(state$piecelocs)), "NA(s).\n")
-  }
-
-  # loop for each piece
-  lMissing <- lapply(
-    seq_len(nrow(state$piecelocs)),
-    function(nPieceNo){
-      # get occupied area
-      mnPieceArea <- setting$piecearea[[state$piecetype[nPieceNo]]]
-      # get size
-      anPieceSize <- apply(mnPieceArea, 2, max) + 1
-      # possible rows
-      if (!is.na(state$piecelocs[nPieceNo,1])){
-        anPossibleRow <- state$piecelocs[nPieceNo, 1]
-      } else {
-        anPossibleRow <- seq(1, setting$boardsize[1] - anPieceSize[1] + 1)
-      }
-      # possible columns
-      if (!is.na(state$piecelocs[nPieceNo,2])){
-        anPossibleCol <- state$piecelocs[nPieceNo, 2]
-      } else {
-        anPossibleCol <- seq(1, setting$boardsize[2] - anPieceSize[2] + 1)
-      }
-      out <- list(anPossibleRow, anPossibleCol)
-      return(out)
+    if (verbose) {
+        cat("[getNumStates] number of candidate states:", nrow(mnCandidate), ".\n")
     }
-  )
-  lMissing <- unlist(lMissing, recursive = FALSE)
-  # row: possible state, col: elements of piecelocs
-  mnCandidate <- as.matrix(expand.grid(lMissing))
 
-  if (verbose){
-    cat("[getNumStates] number of candidate states:", nrow(mnCandidate), ".\n")
-  }
-
-  # loop for each candidate
-  abValid <- apply(
-    mnCandidate,
-    1,
-    function(anCandidate){
-      # make picelocs
-      mnPiecelocs <- matrix(anCandidate, ncol = 2, byrow = TRUE)
-      # make state
-      state$piecelocs <- mnPiecelocs
-      # is it valid?
-      isValidState(state, setting)
-    }
-  )
-  sum(abValid)
+    # loop for each candidate
+    abValid <- apply(mnCandidate, 1, function(anCandidate) {
+        # make picelocs
+        mnPiecelocs <- matrix(anCandidate, ncol = 2, byrow = TRUE)
+        # make state
+        state$piecelocs <- mnPiecelocs
+        # is it valid?
+        isValidState(state, setting)
+    })
+    sum(abValid)
 }
-modifyState <- function(state, pieceid, diff){
-  #' generate new state by moving a piece in a state
-  #'
-  #' Internal. Generate new state by moving a piece in a state.
-  #'
-  #' @param state an object of 'slidepzl_state' object.
-  #' @param pieceid integer. the piece which is moved.
-  #' @param diff a integer vector of length 2, giving the direction to move.
-  #' @return an object of 'slidepzl_state' class, which can be invalid.
+modifyState <- function(state, pieceid, diff) {
+    #' generate new state by moving a piece in a state
+    #'
+    #' Internal. Generate new state by moving a piece in a state.
+    #'
+    #' @param state an object of 'slidepzl_state' object.
+    #' @param pieceid integer. the piece which is moved.
+    #' @param diff a integer vector of length 2, giving the direction to move.
+    #' @return an object of 'slidepzl_state' class, which can be invalid.
 
-  # trap: state
-  stopifnot("slidepzl_state" %in% class(state))
+    # trap: state
+    stopifnot("slidepzl_state" %in% class(state))
 
-  # trap: pieceid
-  stopifnot(is.numeric(pieceid))
-  stopifnot(is.atomic(pieceid))
-  stopifnot(length(pieceid) == 1)
-  stopifnot(pieceid %in% seq_along(state$piecetype))
+    # trap: pieceid
+    stopifnot(is.numeric(pieceid))
+    stopifnot(is.atomic(pieceid))
+    stopifnot(length(pieceid) == 1)
+    stopifnot(pieceid %in% seq_along(state$piecetype))
 
-  # trap: diff
-  stopifnot(is.numeric(diff))
-  stopifnot(is.atomic(diff))
-  stopifnot(length(diff) == 2)
+    # trap: diff
+    stopifnot(is.numeric(diff))
+    stopifnot(is.atomic(diff))
+    stopifnot(length(diff) == 2)
 
-  # move a piece
-  out <- state
-  out$piecelocs[pieceid,] <- out$piecelocs[pieceid,] + diff
+    # move a piece
+    out <- state
+    out$piecelocs[pieceid, ] <- out$piecelocs[pieceid, ] + diff
 
-  return(out)
+    return(out)
 }
-makeNextStates <- function(state, setting){
-  #' return all states which can be generated by moving a piece of given state.
-  #'
-  #' Internal. Return all states which can be generated by moving a piece of a given state.
-  #'
-  #' @param state an object of 'slidepzl_state' class. Original state.
-  #' @param setting an object of 'slidepzl_setting' class.
-  #' @return a named list of objects of 'slidepzl_state' class, giving
-  #'         all states which can be generated by moving a piece of
-  #'         the original state.
-  #'         Validity is guaranteed.
-  #'
-  #'         The name of elements give how they are generated.
-  #'         e.g. '11D' means a piece at (1,1) in the original state is moved down.
+makeNextStates <- function(state, setting) {
+    #' return all states which can be generated by moving a piece of given state.
+    #'
+    #' Internal. Return all states which can be generated by moving a piece of a given state.
+    #'
+    #' @param state an object of 'slidepzl_state' class. Original state.
+    #' @param setting an object of 'slidepzl_setting' class.
+    #' @return a named list of objects of 'slidepzl_state' class, giving
+    #'         all states which can be generated by moving a piece of
+    #'         the original state.
+    #'         Validity is guaranteed.
+    #'
+    #'         The name of elements give how they are generated.
+    #'         e.g. '11D' means a piece at (1,1) in the original state is moved down.
 
-  # trap: state
-  stopifnot("slidepzl_state" %in% class(state))
-  # trap: setting
-  stopifnot("slidepzl_setting" %in% class(setting))
+    # trap: state
+    stopifnot("slidepzl_state" %in% class(state))
+    # trap: setting
+    stopifnot("slidepzl_setting" %in% class(setting))
 
-  # e.g. state has pieces A at (1,1), B at (2,2) and B at (3,3)
+    # e.g. state has pieces A at (1,1), B at (2,2) and B at (3,3)
 
-  # loop for each piece
-  lCandidate <- lapply(
-    seq_along(state$piecetype),
-    function(nPieceID){
-      # return four states
-      # labels are "U", "D", "L", "R"
-      list(
-        U = modifyState(state, nPieceID, c(-1, 0)),
-        D = modifyState(state, nPieceID, c(1, 0)),
-        L = modifyState(state, nPieceID, c(0, -1)),
-        R = modifyState(state, nPieceID, c(0, 1))
-      )
-    }
-  )
-  # labels are "11", "22", "33"
-  names(lCandidate) <- apply(
-    state$piecelocs,
-    1,
-    function(x) paste0(x, collapse = "")
-  )
+    # loop for each piece
+    lCandidate <- lapply(seq_along(state$piecetype), function(nPieceID) {
+        # return four states labels are 'U', 'D', 'L', 'R'
+        list(U = modifyState(state, nPieceID, c(-1, 0)), D = modifyState(state, nPieceID, c(1, 0)),
+            L = modifyState(state, nPieceID, c(0, -1)), R = modifyState(state, nPieceID, c(0, 1)))
+    })
+    # labels are '11', '22', '33'
+    names(lCandidate) <- apply(state$piecelocs, 1, function(x) paste0(x, collapse = ""))
 
-  # a list of (num.piece) x 4 states
-  lCandidate <- unlist(lCandidate, recursive = FALSE)
-  # labels are "11U", "11D", ..., "33R"
-  names(lCandidate) <- sub("\\.", "", names(lCandidate))
+    # a list of (num.piece) x 4 states
+    lCandidate <- unlist(lCandidate, recursive = FALSE)
+    # labels are '11U', '11D', ..., '33R'
+    names(lCandidate) <- sub("\\.", "", names(lCandidate))
 
-  # select valid states
-  abValid <- sapply(
-    lCandidate,
-    function(x) isValidState(x, setting)
-  )
-  lOut <- lCandidate[abValid == 1]
-  return(lOut)
+    # select valid states
+    abValid <- sapply(lCandidate, function(x) isValidState(x, setting))
+    lOut <- lCandidate[abValid == 1]
+    return(lOut)
 }
-isGoalState <- function(state, goalcondition){
-  #' check if a state satisfy goal conditions
-  #'
-  #' Internal. Check if a state satisfy goal conditions.
-  #'
-  #' @param state an object of 'slidepzl_state' class.
-  #' @param goalcondition an object of 'slidepzl_state' class.
-  #' @return logical. Does the state include all pieces in goal conditions?
+isGoalState <- function(state, goalcondition) {
+    #' check if a state satisfy goal conditions
+    #'
+    #' Internal. Check if a state satisfy goal conditions.
+    #'
+    #' @param state an object of 'slidepzl_state' class.
+    #' @param goalcondition an object of 'slidepzl_state' class.
+    #' @return logical. Does the state include all pieces in goal conditions?
 
-  # trap: state
-  stopifnot("slidepzl_state" %in% class(state))
+    # trap: state
+    stopifnot("slidepzl_state" %in% class(state))
 
-  # trap: goalconditon
-  stopifnot("slidepzl_state" %in% class(goalcondition))
-
-  out <- ifelse(
-    all(is.element(as.character(goalcondition), as.character(state))),
-    TRUE, FALSE
-  )
-  return(out)
-}
-makeGraph <- function(
-  setting, state,
-  goalcondition        = NULL,
-  initsize_states      = 1000000,
-  initsize_transitions = 2000000,
-  max_depth            = Inf,
-  max_num_states       = Inf,
-  verbose              = 1
-){
-  #' make a network graph representing a given puzzle
-  #'
-  #' executes breadth-first search of all states which are
-  #' reachable from the initial state. The exception is
-  #' when it reach a state with satisfying goal conditions: it stop to search
-  #' further from the state.
-  #'
-  #' @export
-  #' @param setting an object of 'slidepzl_setting' class. Setting of a puzzle.
-  #' @param state an object of 'slidepzl_state' class. Initial state.
-  #'        It should be a valid state.
-  #' @param goalcondition an object of 'slidepzl_state' class, or NULL.
-  #'        Conditions of goal. It should be a valid state if it is not NULL.
-  #' @param initsize_states initial size of database of states.
-  #'        Execution of this function may slow down when more states are found
-  #'        than \code{initsize_states}.
-  #' @param initsize_transitions initial size of database of transition.
-  #'        Execution of this function may slow down when more transition are found
-  #'        than \code{initsize_transitions}.
-  #' @param max_depth max depth of states to search.
-  #' @param max_num_states max number of states to find.
-  #' @param verbose 0:no message, 1:normal messages, 2:full messsages.
-  #' @return an object of 'igraph' class.
-  #'
-  #'         Vertexes and edges represents states and transition
-  #'         between states, respectively.
-  #'
-  #'         Include following information as attributes of vertexes:
-  #'         \describe{
-  #'           \item{name}{character string, representing a state}
-  #'           \item{depth}{integer, representing depth of the state}
-  #'           \item{status}{1:the initial state, 2:a state
-  #'           which is examined, 3:a state which is not examined,
-  #'           4: a goal state}
-  #'         }
-  #'
-  #'         Include following information as attributes of edges:
-  #'         \describe{
-  #'           \item{name}{which piece is moved to which direction.
-  #'           e.g. "11U" means a piece located at (1,1) in original
-  #'           state is moved up.}
-  #'         }
-  #'
-  #' @importFrom data.table chmatch
-  #' @importFrom igraph E
-  #' @importFrom igraph V
-  #' @importFrom igraph V<-
-  #' @importFrom igraph E<-
-  #' @importFrom igraph graph_from_edgelist
-  #' @example example/makeGraph.R
-
-  # trap: setting
-  stopifnot("slidepzl_setting" %in% class(setting))
-  # trap: state
-  stopifnot("slidepzl_state" %in% class(state))
-  stopifnot(isValidState(state, setting))
-  # trap: goalcondition
-  if (!is.null(goalcondition)){
+    # trap: goalconditon
     stopifnot("slidepzl_state" %in% class(goalcondition))
-    stopifnot(isValidState(goalcondition, setting))
-  }
 
-  # state DB
-  #   abActive:         過去のすべての盤面について、その遷移先をまだ調べていないものに1
-  #   abGoal:           過去のすべての盤面について、目標条件を満たすものに1
-  #   anDepth:          過去のすべての盤面について、その探索の深さ
-  #   lSTATE:           盤面データベース
-  #   asSTATE:          盤面データベースのインデクス文字列
-  #   nNUMSTATE:        盤面データベースの現在のサイズ
-  abActive <- vector("integer", initsize_states)
-  abGoal   <- vector("integer", initsize_states)
-  anDepth  <- vector("integer", initsize_states)
-  lState   <- vector("list", initsize_states)
-  asState  <- vector("character", initsize_states)
-  nNumState <- 0
+    out <- ifelse(all(is.element(as.character(goalcondition), as.character(state))), TRUE, FALSE)
+    return(out)
+}
+makeGraph <- function(setting, state, goalcondition = NULL, initsize_states = 1e+06, initsize_transitions = 2e+06,
+    max_depth = Inf, max_num_states = Inf, verbose = 1) {
+    #' make a network graph representing a given puzzle
+    #'
+    #' executes breadth-first search of all states which are
+    #' reachable from the initial state. The exception is
+    #' when it reach a state with satisfying goal conditions: it stop to search
+    #' further from the state.
+    #'
+    #' @export
+    #' @param setting an object of 'slidepzl_setting' class. Setting of a puzzle.
+    #' @param state an object of 'slidepzl_state' class. Initial state.
+    #'        It should be a valid state.
+    #' @param goalcondition an object of 'slidepzl_state' class, or NULL.
+    #'        Conditions of goal. It should be a valid state if it is not NULL.
+    #' @param initsize_states initial size of database of states.
+    #'        Execution of this function may slow down when more states are found
+    #'        than \code{initsize_states}.
+    #' @param initsize_transitions initial size of database of transition.
+    #'        Execution of this function may slow down when more transition are found
+    #'        than \code{initsize_transitions}.
+    #' @param max_depth max depth of states to search.
+    #' @param max_num_states max number of states to find.
+    #' @param verbose 0:no message, 1:normal messages, 2:full messsages.
+    #' @return an object of 'igraph' class.
+    #'
+    #'         Vertexes and edges represents states and transition
+    #'         between states, respectively.
+    #'
+    #'         Include following information as attributes of vertexes:
+    #'         \describe{
+    #'           \item{name}{character string, representing a state}
+    #'           \item{depth}{integer, representing depth of the state}
+    #'           \item{status}{1:the initial state, 2:a state
+    #'           which is examined, 3:a state which is not examined,
+    #'           4: a goal state}
+    #'         }
+    #'
+    #'         Include following information as attributes of edges:
+    #'         \describe{
+    #'           \item{name}{which piece is moved to which direction.
+    #'           e.g. '11U' means a piece located at (1,1) in original
+    #'           state is moved up.}
+    #'         }
+    #'
+    #' @importFrom data.table chmatch
+    #' @importFrom igraph E
+    #' @importFrom igraph V
+    #' @importFrom igraph V<-
+    #' @importFrom igraph E<-
+    #' @importFrom igraph graph_from_edgelist
+    #' @example example/makeGraph.R
 
-  # 遷移DB
-  #   lTransition:    遷移データベース
-  #   asTransition:   遷移データベース
-  lTransition  <- vector("list", initsize_transitions)
-  asTransition <- vector("character", initsize_transitions)
-  nNumTransition <- 0
-
-  # 盤面DBに初期盤面を追加する
-  nNumState   <- 1
-  abActive[1] <- 1
-  abGoal[1]   <- ifelse(is.null(goalcondition), 0, isGoalState(state, goalcondition))
-  anDepth[1]  <- 0
-  lState[[1]] <- state
-  asState     <- paste0(as.character(state), collapse = "")
-
-  repeat {
-    # 盤面数が指定を超えていたら終了
-    if (nNumState >= max_num_states) break
-
-    # まだ遷移先を調べていない盤面をひとつみつける
-    # もっとも盤面IDが小さいものとする(幅優先探索)
-    nActiveStateID <- match(1, abActive[1:nNumState])
-
-    # みつからなかったら終了
-    if (is.na(nActiveStateID)) break
-    # (その盤面のdepth+1)が指定を超えていたら終了
-    if (anDepth[nActiveStateID] +1 > max_depth) break
-
-    # 抽出
-    oActiveState <- lState[[nActiveStateID]]
-
-    # 遷移先の盤面リストをつくる
-    # 要素名はコマ移動を表わす文字列
-    lNewStates <- makeNextStates(oActiveState, setting)
-
-    # そのインデクス文字列をつくり
-    asNewStates <- sapply(lNewStates, function(x) paste0(as.character(x), collapse=""))
-    # 盤面DBと照合
-    anMatch <- chmatch(asNewStates, asState[1:nNumState])
-    # 要素名(コマ移動を表す文字列)をコピーしておく
-    names(anMatch) <- names(lNewStates)
-
-    # 遷移先盤面リストlNewStatesの要素は次の3種類
-    # a) 過去になかった盤面. anMatchがNAになっている
-    #   -> 盤面DBにも遷移DBにも保存したい
-    # b) 過去にあり、盤面IDが自分よりも前の盤面. anMatchがnActiveStateIDより小さい
-    #   -> 保存は不要
-    # c) 過去にあり、盤面IDが自分よりも後の盤面. anMatchがnActiveStateIDより大きい
-    #   -> 遷移DBにのみ保存したい
-
-    # a) 盤面DBに追加
-    lAddStates <- lNewStates[is.na(anMatch)]
-    asAddStates <- asNewStates[is.na(anMatch)]
-    if (length(lAddStates) > 0){
-      # lAddStatesが空でない場合
-      # 盤面IDのベクトルを決める
-      anAddStatesID <- nNumState + seq_along(lAddStates)
-      # 終了判定
-      if (!is.null(goalcondition)){
-        abGoalTemp <- sapply(lAddStates, function(x) isGoalState(x, goalcondition))
-      } else {
-        abGoalTemp <- rep(FALSE, length(anAddStatesID))
-      }
-      # 格納
-      abActive[anAddStatesID] <- ifelse(abGoalTemp == 1, 0, 1)
-      abGoal[anAddStatesID]   <- abGoalTemp
-      anDepth[anAddStatesID]  <- rep(anDepth[nActiveStateID] + 1, length(lAddStates))
-      lState[anAddStatesID]   <- lAddStates
-      asState[anAddStatesID]  <- asAddStates
-      nNumState               <- nNumState + length(lAddStates)
-      # 状態数を更新
-    } else {
-      # lAddStatesが空である場合、返し値は空のベクトル
-      anAddStatesID <- c()
+    # trap: setting
+    stopifnot("slidepzl_setting" %in% class(setting))
+    # trap: state
+    stopifnot("slidepzl_state" %in% class(state))
+    stopifnot(isValidState(state, setting))
+    # trap: goalcondition
+    if (!is.null(goalcondition)) {
+        stopifnot("slidepzl_state" %in% class(goalcondition))
+        stopifnot(isValidState(goalcondition, setting))
     }
 
-    # trap: 盤面DBに追加した個数は、anMatchがNAであった個数
-    stopifnot(sum(is.na(anMatch)) == length(anAddStatesID))
-    # ここでanMatchのNAを埋めておく
-    anMatch[is.na(anMatch)] <- anAddStatesID
+    abActive <- vector("integer", initsize_states)
+    abGoal <- vector("integer", initsize_states)
+    anDepth <- vector("integer", initsize_states)
+    lState <- vector("list", initsize_states)
+    asState <- vector("character", initsize_states)
+    nNumState <- 0
 
-    ## a)c) 遷移DBに追加
-    # 対象を選ぶ。もう調べた盤面への遷移は記録しない
-    anMatch <- anMatch[anMatch > nActiveStateID]
-    # 遷移先DBに登録
-    anTransitionID <- nNumTransition + seq_along(anMatch)
-    lTransition[anTransitionID] <- lapply(
-      anMatch,
-      function(nToID) c(nActiveStateID, nToID)
-    )
-    asTransition[anTransitionID] <- names(anMatch)
-    nNumTransition <- nNumTransition + length(anMatch)
+    lTransition <- vector("list", initsize_transitions)
+    asTransition <- vector("character", initsize_transitions)
+    nNumTransition <- 0
 
-    # 盤面を調べたことを記録する
-    abActive[nActiveStateID] <- FALSE
+    nNumState <- 1
+    abActive[1] <- 1
+    abGoal[1] <- ifelse(is.null(goalcondition), 0, isGoalState(state, goalcondition))
+    anDepth[1] <- 0
+    lState[[1]] <- state
+    asState <- paste0(as.character(state), collapse = "")
 
-    # 報告
-    if (verbose == 2) {
-      cat("----- \n")
-      cat("Processed ID:", nActiveStateID, "(depth", anDepth[nActiveStateID], ")\n")
-      cat("index:", asState[nActiveStateID], "\n")
-      print(as.matrix(lState[[nActiveStateID]], setting))
-      cat(length(lAddStates), "new states are found.\n")
-      cat("current # of total states:", nNumState, "\n")
-      cat("current # of active states:", sum(abActive[1:nNumState]), "\n")
-      cat("current # of transitions:", nNumTransition, "\n")
-      cat("current # of goal states:", sum(abGoal[1:nNumState]), "\n")
+    repeat {
+        if (nNumState >= max_num_states)
+            break
+
+        nActiveStateID <- match(1, abActive[1:nNumState])
+
+        if (is.na(nActiveStateID))
+            break
+        if (anDepth[nActiveStateID] + 1 > max_depth)
+            break
+
+        oActiveState <- lState[[nActiveStateID]]
+
+        lNewStates <- makeNextStates(oActiveState, setting)
+
+        asNewStates <- sapply(lNewStates, function(x) paste0(as.character(x), collapse = ""))
+        anMatch <- chmatch(asNewStates, asState[1:nNumState])
+        names(anMatch) <- names(lNewStates)
+
+        lAddStates <- lNewStates[is.na(anMatch)]
+        asAddStates <- asNewStates[is.na(anMatch)]
+        if (length(lAddStates) > 0) {
+            anAddStatesID <- nNumState + seq_along(lAddStates)
+            if (!is.null(goalcondition)) {
+                abGoalTemp <- sapply(lAddStates, function(x) isGoalState(x, goalcondition))
+            } else {
+                abGoalTemp <- rep(FALSE, length(anAddStatesID))
+            }
+            abActive[anAddStatesID] <- ifelse(abGoalTemp == 1, 0, 1)
+            abGoal[anAddStatesID] <- abGoalTemp
+            anDepth[anAddStatesID] <- rep(anDepth[nActiveStateID] + 1, length(lAddStates))
+            lState[anAddStatesID] <- lAddStates
+            asState[anAddStatesID] <- asAddStates
+            nNumState <- nNumState + length(lAddStates)
+            # 状態数を更新
+        } else {
+            anAddStatesID <- c()
+        }
+
+        stopifnot(sum(is.na(anMatch)) == length(anAddStatesID))
+        anMatch[is.na(anMatch)] <- anAddStatesID
+
+        anMatch <- anMatch[anMatch > nActiveStateID]
+        anTransitionID <- nNumTransition + seq_along(anMatch)
+        lTransition[anTransitionID] <- lapply(anMatch, function(nToID) c(nActiveStateID, nToID))
+        asTransition[anTransitionID] <- names(anMatch)
+        nNumTransition <- nNumTransition + length(anMatch)
+
+        abActive[nActiveStateID] <- FALSE
+
+        if (verbose == 2) {
+            cat("----- \n")
+            cat("Processed ID:", nActiveStateID, "(depth", anDepth[nActiveStateID], ")\n")
+            cat("index:", asState[nActiveStateID], "\n")
+            print(as.matrix(lState[[nActiveStateID]], setting))
+            cat(length(lAddStates), "new states are found.\n")
+            cat("current # of total states:", nNumState, "\n")
+            cat("current # of active states:", sum(abActive[1:nNumState]), "\n")
+            cat("current # of transitions:", nNumTransition, "\n")
+            cat("current # of goal states:", sum(abGoal[1:nNumState]), "\n")
+        }
+        if (verbose == 1) {
+            cat("Processed #", nActiveStateID, "(depth", anDepth[nActiveStateID], ")", "of", nNumState,
+                "states;", "goal", sum(abGoal[1:nNumState]), ";", nNumTransition, "transitions\n")
+        }
     }
-    if (verbose == 1) {
-      cat(
-        "Processed #", nActiveStateID, "(depth", anDepth[nActiveStateID], ")",
-        "of", nNumState, "states;",
-        "goal", sum(abGoal[1:nNumState]), ";",
-        nNumTransition, "transitions\n"
-      )
-    }
-  }
 
-  g <- graph_from_edgelist(
-    matrix(
-      unlist(lTransition[1:nNumTransition]),
-      ncol = 2, byrow = T
-    )
-  )
-  # anStatus: {1:スタート, 2:inactive(遷移先を調べた), 3:active(調べてない), 4:goal}
-  anStatus <- rep(2, nNumState)
-  anStatus[1] <- 1
-  anStatus[abActive[1:nNumState] == TRUE] <- 3
-  anStatus[abGoal[1:nNumState] == TRUE] <- 4
+    g <- graph_from_edgelist(matrix(unlist(lTransition[1:nNumTransition]), ncol = 2, byrow = T))
+    # anStatus: {1:スター??<U+383C><U+3E38>, 2:inactive(遷移先を調べ??<U+393C><U+3E66>), 3:active(調べてな??<U+383C><U+3E34>),
+    # 4:goal}
+    anStatus <- rep(2, nNumState)
+    anStatus[1] <- 1
+    anStatus[abActive[1:nNumState] == TRUE] <- 3
+    anStatus[abGoal[1:nNumState] == TRUE] <- 4
 
-  V(g)$name   <- asState[1:nNumState]
-  V(g)$depth  <- anDepth[1:nNumState]
-  V(g)$status <- anStatus
+    V(g)$name <- asState[1:nNumState]
+    V(g)$depth <- anDepth[1:nNumState]
+    V(g)$status <- anStatus
 
-  E(g)$name   <- asTransition[1:nNumTransition]
+    E(g)$name <- asTransition[1:nNumTransition]
 
-  return(g)
+    return(g)
 }

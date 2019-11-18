@@ -29,21 +29,21 @@ whether it is on any acyclic path to any of goal states
 Suppose you proceeded from the initial state of the sliding puzzles.
 \itemize{
 \item
-When your current state is "reachable", you are on the right track.
+When your current state is 'reachable', you are on the right track.
 By proceeding further from there, you can
 achive one of goal (or `target``) states
 without returning states which you have already passes through
 (and without being interrupted by any of goal states,
 if `target` is specified).
 \item
-When your current state is "unreachable", something goes wrong.
+When your current state is 'unreachable', something goes wrong.
 By proceeding further from there you will eventually see
 states which you have already passes through
 (or will be intrrupted by any of goal states if `target` is specified) before
 you achive one of goal (`target`) states.
 }
 
-"Reachability" of a state is a wider concept than
+'Reachability' of a state is a wider concept than
 whether it is on the shortest pathes to the goal (target) states:
-States on the longer pathes are also "reachable".
+States on the longer pathes are also 'reachable'.
 }

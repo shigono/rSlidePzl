@@ -15,7 +15,7 @@ of the piece.
 Should be >= 1 and <= 9, or NA.}
 }
 \value{
-an object of class "slidepzl_piece", which is a list with following elements:
+an object of class 'slidepzl_piece', which is a list with following elements:
         \describe{
           \item{type}{'type' of piece}
           \item{loc}{location of piece}

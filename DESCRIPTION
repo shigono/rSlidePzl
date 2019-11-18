@@ -1,8 +1,9 @@
 Package: rSlidePzl
 Type: Package
 Title: Analyze sliding puzzles
-Version: 0.1.1
-Author: Shigeru ONO
+Version: 0.1.2
+Author@R: person("Shigeru", "ONO", email = "elsur_2001@yahoo.co.jp", 
+  role = c("aut", "cre"))
 Maintainer: Shigeru ONO <elsur_2001@yahoo.co.jp>
 Description: Generate a network of possible states of given sliding puzzle. 
     Provide some utility functions, including functions to find shortest 
@@ -12,14 +13,17 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.0
 Suggests: 
-    testthat
+    testthat,
+    knitr,
+    rmarkdown
 Imports: 
-    data.table,
-    GGally,
-    ggplot2,
-    network,
-    igraph,
-    sna,
-    intergraph,
-    scales, 
-    qgraph
+    data.table (>= 1.12.6),
+    GGally     (>= 1.4.0),
+    ggplot2    (>= 3.2.1),   
+    network    (>= 1.15),  
+    igraph     (>= 1.2.4.1),
+    sna        (>= 2.4), 
+    intergraph (>= 2.0-2),
+    scales     (>= 1.0.0), 
+    qgraph     (>= 1.6.4)
+VignetteBuilder: knitr

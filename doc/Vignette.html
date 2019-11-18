@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+
+<meta charset="utf-8" />
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<meta name="author" content="Shigeru ONO" />
+
+<meta name="date" content="2019-11-18" />
+
+<title>rSlidePzl</title>
+
+
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css" data-origin="pandoc">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+
+</style>
+<script>
+// apply pandoc div.sourceCode style to pre.sourceCode instead
+(function() {
+  var sheets = document.styleSheets;
+  for (var i = 0; i < sheets.length; i++) {
+    if (sheets[i].ownerNode.dataset["origin"] !== "pandoc") continue;
+    try { var rules = sheets[i].cssRules; } catch (e) { continue; }
+    for (var j = 0; j < rules.length; j++) {
+      var rule = rules[j];
+      // check if there is a div.sourceCode rule
+      if (rule.type !== rule.STYLE_RULE || rule.selectorText !== "div.sourceCode") continue;
+      var style = rule.style.cssText;
+      // check if color or background-color is set
+      if (rule.style.color === '' && rule.style.backgroundColor === '') continue;
+      // replace div.sourceCode by a pre.sourceCode rule
+      sheets[i].deleteRule(j);
+      sheets[i].insertRule('pre.sourceCode{' + style + '}', j);
+    }
+  }
+})();
+</script>
+
+
+
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#header {
+text-align: center;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
+
+
+
+
+</head>
+
+<body>
+
+
+
+
+<h1 class="title toc-ignore">rSlidePzl</h1>
+<h4 class="author">Shigeru ONO</h4>
+<h4 class="date">2019-11-18</h4>
+
+
+
+<p><code>rSlidePzl</code> package provides some funtions to analyze <a href="https://en.wikipedia.org/wiki/Sliding_puzzle">sliding puzzle</a>.</p>
+<p>A main workhouse of this package is <code>makeGraph</code> function, by which you can make a network graph representing possible ‘states’ (i.e. snapshots of the board) and transition relationships between them.</p>
+<p>You can examine the property of the graph with <a href="https://igraph.org/r/"><code>igraph</code> package</a>, or any other tools for network analysis like <a href="https://gephi.org/">Gephi</a>.</p>
+<div id="installation" class="section level1">
+<h1>Installation</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># install.packages(&quot;devtools&quot;)</span></a>
+<a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;shigono/rSlidePzl&quot;</span>)</a></code></pre></div>
+</div>
+<div id="example-3x3-sliding-puzzle" class="section level1">
+<h1>Example: 3x3 sliding puzzle</h1>
+<p>Suppose you have a simple sliding puzzle with 8 pieces. The size of board is 3 x 3. The size of all pieces is 1 x 1. The initial state is:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">col1</th>
+<th align="left">col2</th>
+<th align="left">col3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>row1</td>
+<td align="left">A</td>
+<td align="left">C</td>
+<td align="left"></td>
+</tr>
+<tr class="even">
+<td>row2</td>
+<td align="left">D</td>
+<td align="left">B</td>
+<td align="left">E</td>
+</tr>
+<tr class="odd">
+<td>row3</td>
+<td align="left">F</td>
+<td align="left">G</td>
+<td align="left">F</td>
+</tr>
+</tbody>
+</table>
+<p>Your goal is:</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">col1</th>
+<th align="left">col2</th>
+<th align="left">col3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>row1</td>
+<td align="left">A</td>
+<td align="left">B</td>
+<td align="left">C</td>
+</tr>
+<tr class="even">
+<td>row2</td>
+<td align="left">D</td>
+<td align="left">E</td>
+<td align="left">F</td>
+</tr>
+<tr class="odd">
+<td>row3</td>
+<td align="left">G</td>
+<td align="left">H</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<p>Let’s try to analyse this puzzle with <code>rSlidePzl</code> package.</p>
+<div id="make-a-setting" class="section level2">
+<h2>make a setting</h2>
+<div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span>(rSlidePzl)</a>
+<a class="sourceLine" id="cb2-2" title="2"></a>
+<a class="sourceLine" id="cb2-3" title="3"><span class="co"># make setting of a sliding puzzle</span></a>
+<a class="sourceLine" id="cb2-4" title="4">oSetting &lt;-<span class="st"> </span><span class="kw">makeSetting</span>(</a>
+<a class="sourceLine" id="cb2-5" title="5">  <span class="dt">boardsize =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">3</span>),</a>
+<a class="sourceLine" id="cb2-6" title="6">  <span class="dt">piecesize =</span> <span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb2-7" title="7">    <span class="dt">A =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb2-8" title="8">    <span class="dt">B =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb2-9" title="9">    <span class="dt">C =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb2-10" title="10">    <span class="dt">D =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb2-11" title="11">    <span class="dt">E =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb2-12" title="12">    <span class="dt">F =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb2-13" title="13">    <span class="dt">G =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>),</a>
+<a class="sourceLine" id="cb2-14" title="14">    <span class="dt">H =</span> <span class="kw">c</span>(<span class="dv">1</span>, <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb2-15" title="15">  )</a>
+<a class="sourceLine" id="cb2-16" title="16">)</a>
+<a class="sourceLine" id="cb2-17" title="17"><span class="co"># make an initial state</span></a>
+<a class="sourceLine" id="cb2-18" title="18">oStart &lt;-<span class="st"> </span><span class="kw">makeState</span>(</a>
+<a class="sourceLine" id="cb2-19" title="19">  <span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb2-20" title="20">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb2-21" title="21">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;B&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>)),</a>
+<a class="sourceLine" id="cb2-22" title="22">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;C&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)),</a>
+<a class="sourceLine" id="cb2-23" title="23">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;D&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb2-24" title="24">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;E&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)),</a>
+<a class="sourceLine" id="cb2-25" title="25">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;F&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">3</span>)),</a>
+<a class="sourceLine" id="cb2-26" title="26">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;G&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb2-27" title="27">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;H&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb2-28" title="28">  )</a>
+<a class="sourceLine" id="cb2-29" title="29">)</a>
+<a class="sourceLine" id="cb2-30" title="30"><span class="kw">stopifnot</span>(<span class="kw">isValidState</span>(oStart, oSetting))</a>
+<a class="sourceLine" id="cb2-31" title="31"></a>
+<a class="sourceLine" id="cb2-32" title="32"><span class="co"># define conditions of goal</span></a>
+<a class="sourceLine" id="cb2-33" title="33">oGoalCondition &lt;-<span class="st"> </span><span class="kw">makeState</span>(</a>
+<a class="sourceLine" id="cb2-34" title="34">  <span class="kw">list</span>(</a>
+<a class="sourceLine" id="cb2-35" title="35">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;A&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb2-36" title="36">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;B&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">2</span>)),</a>
+<a class="sourceLine" id="cb2-37" title="37">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;C&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">3</span>)),</a>
+<a class="sourceLine" id="cb2-38" title="38">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;D&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb2-39" title="39">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;E&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">2</span>)),</a>
+<a class="sourceLine" id="cb2-40" title="40">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;F&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">2</span>,<span class="dv">3</span>)),</a>
+<a class="sourceLine" id="cb2-41" title="41">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;G&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">1</span>)),</a>
+<a class="sourceLine" id="cb2-42" title="42">    <span class="kw">makePiece</span>(<span class="dt">type =</span> <span class="st">&quot;H&quot;</span>, <span class="dt">loc =</span> <span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">2</span>))</a>
+<a class="sourceLine" id="cb2-43" title="43">  )</a>
+<a class="sourceLine" id="cb2-44" title="44">)</a>
+<a class="sourceLine" id="cb2-45" title="45"><span class="kw">stopifnot</span>(<span class="kw">isValidState</span>(oGoalCondition, oSetting))</a></code></pre></div>
+</div>
+<div id="make-a-network-graph" class="section level2">
+<h2>make a network graph</h2>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># find all states within 5 moves and make a network graph of them</span></a>
+<a class="sourceLine" id="cb3-2" title="2">oGraph &lt;-<span class="st"> </span><span class="kw">makeGraph</span>(oSetting, oStart, oGoalCondition, <span class="dt">max_depth =</span> <span class="dv">5</span>, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
+<p>By default, <code>makeGraph</code> searchs all states which are reachable from the initial state without passing through the goal states. This exhaustive search process can take very long time, and the returned graph can be huge. You can limit your search space by <code>max_depth</code> argument or <code>max_num_states</code> argument.</p>
+</div>
+<div id="plot-the-graph" class="section level2">
+<h2>plot the graph</h2>
+<p><code>rSlidePzl</code> package also provides <code>plotGraph</code> function to plot a small network graph. Consider to use Gephi or some other software for large graphs.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb4-2" title="2"><span class="kw">plotGraph</span>(oGraph, <span class="dt">method =</span> <span class="st">&quot;GGally&quot;</span>)</a></code></pre></div>
+<p><img src="data:image/png;base64,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" /><!-- --></p>
+<p>The blue node (circle) in the plot represents the initial state. Other nodes are possible states you can generate by moving pieces within 5 times. The red node represents the goal state.</p>
+<p>The edges between nodes represent transition relationships between nodes. For example, the blue node has two edges labeled as “12R” and “23U”. It says that at the inital state you have two choice: move a piece at (1,2) (i.e. “C”) right, or move a piece at (2,3) (“E”) upper.</p>
+</div>
+<div id="find-a-best-solution" class="section level2">
+<h2>find a best solution</h2>
+<p>Though the main focus of <code>rSlidePzl</code> package is not to get solutions of given puzzle but to generate a network graph, this package have some helper functions to extract solutions from the graph.</p>
+<p>In this example, you have only one path which is shortest. Your best moves are:</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># # show shortest pathes</span></a>
+<a class="sourceLine" id="cb5-2" title="2">lSolution &lt;-<span class="st"> </span><span class="kw">getShortestPath</span>(oGraph)</a>
+<a class="sourceLine" id="cb5-3" title="3"><span class="kw">print</span>(lSolution<span class="op">$</span>transition)</a></code></pre></div>
+<pre><code>## [1] &quot;12R&quot; &quot;22U&quot; &quot;23L&quot; &quot;33U&quot;</code></pre>
+<p>It says: move a piece at (1,2) right,</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">col1</th>
+<th align="left">col2</th>
+<th align="left">col3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>row1</td>
+<td align="left">A</td>
+<td align="left"></td>
+<td align="left">C</td>
+</tr>
+<tr class="even">
+<td>row2</td>
+<td align="left">D</td>
+<td align="left">B</td>
+<td align="left">E</td>
+</tr>
+<tr class="odd">
+<td>row3</td>
+<td align="left">G</td>
+<td align="left">H</td>
+<td align="left">F</td>
+</tr>
+</tbody>
+</table>
+<p>move a piece at (2,2) upper,</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">col1</th>
+<th align="left">col2</th>
+<th align="left">col3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>row1</td>
+<td align="left">A</td>
+<td align="left">B</td>
+<td align="left">C</td>
+</tr>
+<tr class="even">
+<td>row2</td>
+<td align="left">D</td>
+<td align="left"></td>
+<td align="left">E</td>
+</tr>
+<tr class="odd">
+<td>row3</td>
+<td align="left">G</td>
+<td align="left">H</td>
+<td align="left">F</td>
+</tr>
+</tbody>
+</table>
+<p>move a piece at (2,3) left,</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">col1</th>
+<th align="left">col2</th>
+<th align="left">col3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>row1</td>
+<td align="left">A</td>
+<td align="left">B</td>
+<td align="left">C</td>
+</tr>
+<tr class="even">
+<td>row2</td>
+<td align="left">D</td>
+<td align="left">E</td>
+<td align="left"></td>
+</tr>
+<tr class="odd">
+<td>row3</td>
+<td align="left">G</td>
+<td align="left">H</td>
+<td align="left">F</td>
+</tr>
+</tbody>
+</table>
+<p>and move a piece at (3,3) upper.</p>
+<table>
+<thead>
+<tr class="header">
+<th></th>
+<th align="left">col1</th>
+<th align="left">col2</th>
+<th align="left">col3</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>row1</td>
+<td align="left">A</td>
+<td align="left">B</td>
+<td align="left">C</td>
+</tr>
+<tr class="even">
+<td>row2</td>
+<td align="left">D</td>
+<td align="left">E</td>
+<td align="left">F</td>
+</tr>
+<tr class="odd">
+<td>row3</td>
+<td align="left">G</td>
+<td align="left">H</td>
+<td align="left"></td>
+</tr>
+</tbody>
+</table>
+<p>I hope you enjoy.</p>
+</div>
+</div>
+
+
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>

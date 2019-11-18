@@ -56,7 +56,7 @@ an object of 'igraph' class.
         Include following information as attributes of edges:
         \describe{
           \item{name}{which piece is moved to which direction.
-          e.g. "11U" means a piece located at (1,1) in original
+          e.g. '11U' means a piece located at (1,1) in original
           state is moved up.}
         }
 }

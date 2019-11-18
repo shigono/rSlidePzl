@@ -11,7 +11,7 @@ makeState(pieces)
 They can have NAs in their locations.}
 }
 \value{
-an object of class "slidepzl_state", which is a list with following elements:
+an object of class 'slidepzl_state', which is a list with following elements:
         \describe{
           \item{piecetypes}{
             a character vector, whose ith element gives the 'type' of ith piece.
