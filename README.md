@@ -6,4 +6,4 @@
 `rSlidePzl` package provides some funtions to analyze [sliding
 puzzle](https://en.wikipedia.org/wiki/Sliding_puzzle).
 
-See vignette for details.
+See [the vignette](doc/Vignette.html) for details.

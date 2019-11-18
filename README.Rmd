@@ -18,4 +18,4 @@ knitr::opts_chunk$set(
 `rSlidePzl` package provides some funtions to analyze 
 [sliding puzzle](https://en.wikipedia.org/wiki/Sliding_puzzle).
 
-See [the vignette](doc/Vignette.html) for details.
+See [the vignette](doc/Vignette.html) for details. 
