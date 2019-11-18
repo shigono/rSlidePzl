@@ -9,6 +9,8 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+<!-- run rmarkdown::render("vignettes/Vignette.Rmd", output_file="Vignette.html", output_dir = "doc") -->
+
 `rSlidePzl` package provides some funtions to analyze 
 [sliding puzzle](https://en.wikipedia.org/wiki/Sliding_puzzle).
 
@@ -17,16 +19,13 @@ you can make a network graph representing
 possible 'states' (i.e. snapshots of the board)
 and transition relationships between them.
 
-You can examine the property of the graph with [`igraph` package](https://igraph.org/r/), 
-or any other tools for network analysis like [Gephi](https://gephi.org/).
-
-# Installation
+## Installation
 
 ``` r
 # install.packages("devtools")
 devtools::install_github("shigono/rSlidePzl")
 ```
-# Example: 3x3 sliding puzzle
+## Example: 3x3 sliding puzzle
 
 Suppose you have a simple sliding puzzle with 8 pieces.
 The size of board is 3 x 3. The size of all pieces is 1 x 1. 
@@ -48,7 +47,10 @@ knitr::kable(msInit, label = "label")
 
 Let's try to analyse this puzzle with `rSlidePzl` package.
 
-## make a setting
+### make a setting
+
+First, make a setting of your puzzle.
+
 ```{r example0}
 library(rSlidePzl)
 
@@ -97,8 +99,8 @@ oGoalCondition <- makeState(
 stopifnot(isValidState(oGoalCondition, oSetting))
 ```
 
-
-## make a network graph
+### make a network graph
+Now you can make a network graph of your puzzle.
 
 ```{r example1}
 # find all states within 5 moves and make a network graph of them
@@ -110,7 +112,7 @@ without passing through the goal states. This exhaustive search process
 can take very long time, and the returned graph can be huge. 
 You can limit your search space by `max_depth` argument or `max_num_states` argument.
 
-## plot the graph
+### plot the graph
 
 `rSlidePzl` package also provides `plotGraph` function to plot a small network graph.
 Consider to use Gephi or some other software for large graphs.
@@ -129,8 +131,12 @@ For example, the blue node has two edges labeled as "12R" and "23U".
 It says that at the inital state you have two choice: move a piece at (1,2) (i.e. "C") right, 
 or move a piece at (2,3) ("E") upper. 
 
+### examine your puzzle
 
-## find a best solution
+You can examine the property of the graph with [`igraph` package](https://igraph.org/r/), 
+or any other tools for network analysis like [Gephi](https://gephi.org/).
+
+### find a best solution
 
 Though the main focus of `rSlidePzl` package is not to get solutions of given puzzle but to 
 generate a network graph, 

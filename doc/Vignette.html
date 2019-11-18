@@ -308,16 +308,16 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 
 
 
+<!-- run rmarkdown::render("vignettes/Vignette.Rmd", output_file="Vignette.html", output_dir = "doc") -->
 <p><code>rSlidePzl</code> package provides some funtions to analyze <a href="https://en.wikipedia.org/wiki/Sliding_puzzle">sliding puzzle</a>.</p>
 <p>A main workhouse of this package is <code>makeGraph</code> function, by which you can make a network graph representing possible ‘states’ (i.e. snapshots of the board) and transition relationships between them.</p>
-<p>You can examine the property of the graph with <a href="https://igraph.org/r/"><code>igraph</code> package</a>, or any other tools for network analysis like <a href="https://gephi.org/">Gephi</a>.</p>
-<div id="installation" class="section level1">
-<h1>Installation</h1>
+<div id="installation" class="section level2">
+<h2>Installation</h2>
 <div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb1-1" title="1"><span class="co"># install.packages(&quot;devtools&quot;)</span></a>
 <a class="sourceLine" id="cb1-2" title="2">devtools<span class="op">::</span><span class="kw">install_github</span>(<span class="st">&quot;shigono/rSlidePzl&quot;</span>)</a></code></pre></div>
 </div>
-<div id="example-3x3-sliding-puzzle" class="section level1">
-<h1>Example: 3x3 sliding puzzle</h1>
+<div id="example-3x3-sliding-puzzle" class="section level2">
+<h2>Example: 3x3 sliding puzzle</h2>
 <p>Suppose you have a simple sliding puzzle with 8 pieces. The size of board is 3 x 3. The size of all pieces is 1 x 1. The initial state is:</p>
 <table>
 <thead>
@@ -381,8 +381,9 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 </tbody>
 </table>
 <p>Let’s try to analyse this puzzle with <code>rSlidePzl</code> package.</p>
-<div id="make-a-setting" class="section level2">
-<h2>make a setting</h2>
+<div id="make-a-setting" class="section level3">
+<h3>make a setting</h3>
+<p>First, make a setting of your puzzle.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb2-1" title="1"><span class="kw">library</span>(rSlidePzl)</a>
 <a class="sourceLine" id="cb2-2" title="2"></a>
 <a class="sourceLine" id="cb2-3" title="3"><span class="co"># make setting of a sliding puzzle</span></a>
@@ -429,14 +430,15 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <a class="sourceLine" id="cb2-44" title="44">)</a>
 <a class="sourceLine" id="cb2-45" title="45"><span class="kw">stopifnot</span>(<span class="kw">isValidState</span>(oGoalCondition, oSetting))</a></code></pre></div>
 </div>
-<div id="make-a-network-graph" class="section level2">
-<h2>make a network graph</h2>
+<div id="make-a-network-graph" class="section level3">
+<h3>make a network graph</h3>
+<p>Now you can make a network graph of your puzzle.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb3-1" title="1"><span class="co"># find all states within 5 moves and make a network graph of them</span></a>
 <a class="sourceLine" id="cb3-2" title="2">oGraph &lt;-<span class="st"> </span><span class="kw">makeGraph</span>(oSetting, oStart, oGoalCondition, <span class="dt">max_depth =</span> <span class="dv">5</span>, <span class="dt">verbose =</span> <span class="dv">0</span>)</a></code></pre></div>
 <p>By default, <code>makeGraph</code> searchs all states which are reachable from the initial state without passing through the goal states. This exhaustive search process can take very long time, and the returned graph can be huge. You can limit your search space by <code>max_depth</code> argument or <code>max_num_states</code> argument.</p>
 </div>
-<div id="plot-the-graph" class="section level2">
-<h2>plot the graph</h2>
+<div id="plot-the-graph" class="section level3">
+<h3>plot the graph</h3>
 <p><code>rSlidePzl</code> package also provides <code>plotGraph</code> function to plot a small network graph. Consider to use Gephi or some other software for large graphs.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb4-1" title="1"><span class="kw">set.seed</span>(<span class="dv">1</span>)</a>
 <a class="sourceLine" id="cb4-2" title="2"><span class="kw">plotGraph</span>(oGraph, <span class="dt">method =</span> <span class="st">&quot;GGally&quot;</span>)</a></code></pre></div>
@@ -444,8 +446,12 @@ code > span.fu { color: #900; font-weight: bold; }  code > span.er { color: #a61
 <p>The blue node (circle) in the plot represents the initial state. Other nodes are possible states you can generate by moving pieces within 5 times. The red node represents the goal state.</p>
 <p>The edges between nodes represent transition relationships between nodes. For example, the blue node has two edges labeled as “12R” and “23U”. It says that at the inital state you have two choice: move a piece at (1,2) (i.e. “C”) right, or move a piece at (2,3) (“E”) upper.</p>
 </div>
-<div id="find-a-best-solution" class="section level2">
-<h2>find a best solution</h2>
+<div id="examine-your-puzzle" class="section level3">
+<h3>examine your puzzle</h3>
+<p>You can examine the property of the graph with <a href="https://igraph.org/r/"><code>igraph</code> package</a>, or any other tools for network analysis like <a href="https://gephi.org/">Gephi</a>.</p>
+</div>
+<div id="find-a-best-solution" class="section level3">
+<h3>find a best solution</h3>
 <p>Though the main focus of <code>rSlidePzl</code> package is not to get solutions of given puzzle but to generate a network graph, this package have some helper functions to extract solutions from the graph.</p>
 <p>In this example, you have only one path which is shortest. Your best moves are:</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb5-1" title="1"><span class="co"># # show shortest pathes</span></a>
