@@ -41,4 +41,5 @@ mystate <- makeState(
     makePiece(type = "H", loc = c(3,2))
   )
 )
+mystate
 }

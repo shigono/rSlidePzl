@@ -44,6 +44,7 @@ an object of class 'slidepzl_setting',
 make setting of a sliding puzzle
 }
 \examples{
+# simple 3x3 puzzle
 mysetting <- makeSetting(
   boardsize = c(3,3),
   piecesize = list(

@@ -8,7 +8,7 @@
 }
 \arguments{
 \item{piece}{a object of 'slidepzl_piece' class.
-Should have no NA.}
+Should have no NA in location.}
 }
 \value{
 a character string of length 3
