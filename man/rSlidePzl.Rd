@@ -5,5 +5,5 @@
 \alias{rSlidePzl}
 \title{rSlidePzl: A package for analyzing slide puzzles}
 \description{
-rSlidePzl: A package for analyzing slide puzzles
+A package for analyzing slide puzzles.
 }
